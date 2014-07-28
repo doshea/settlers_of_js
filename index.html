@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Settlers of JS</title>
+    <meta content="Dylan O'Shea" name="author">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Settlers, Catan, boardgame">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+
+    <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
+    
+    <link href="./css/settlers.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./js/constants.js"></script>
+    <script type="text/javascript" src="./js/game.js"></script>
+
+  </head>
+  <body>
+    <label>Players:</label>
+    <div id='players'></div>
+    <button onclick="game.add_player()">Add Player</button>
+
+    <div id='board'></div>
+    
+    <div id='log'>
+      <ul id='log-msgs'>
+        <li class='log-msg'><b>Welcome to Settlers of JS</b></span>
+      </ul>
+    </div>
+
+  </body>
+</html>
