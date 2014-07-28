@@ -106,6 +106,7 @@ class Hex
     @type = @roll = @dots = null
 
     @dom_hex = @build_hex(row)
+    @dom_prob
   find_hex: (id) ->
     @hexes[parseInt(id)-1]
   build_hex: (row)->
@@ -122,18 +123,21 @@ class Hex
     @
   add_remove_probability: ->
     if _.contains(['sea','desert'], @type)
-      @dom_hex.find('.probability').remove()
+      if @dom_prob
+        @dom_prob.remove()
+        @dom_prob = null
     else if @dom_hex.find('.probability').length is 0
       @dom_hex.find('.hex-image').append(PROBABILITY_NODE)
+      @dom_prob = @dom_hex.find('.probability')
     @
   circularize_probability: ->
-    prob = @dom_hex.find('.probability')
-    max_dim = _.max([prob.width(),prob.height()])
-    prob.css
-      'width':'auto'
+    @dom_prob.css(
+      'width':'auto',
       'height':'auto'
-    prob.width(max_dim)
-    prob.height(max_dim)
+    )
+    max_dim = _.max([@dom_prob.width(),@dom_prob.height()])
+    @dom_prob.width(max_dim)
+    @dom_prob.height(max_dim)
     @
   set_dots: (new_dots) ->
     @dots = new_dots

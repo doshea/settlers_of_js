@@ -145,6 +145,7 @@
       this.id = game.hexes.length;
       this.type = this.roll = this.dots = null;
       this.dom_hex = this.build_hex(row);
+      this.dom_prob;
     }
 
     Hex.prototype.find_hex = function(id) {
@@ -170,19 +171,26 @@
 
     Hex.prototype.add_remove_probability = function() {
       if (_.contains(['sea', 'desert'], this.type)) {
-        this.dom_hex.find('.probability').remove();
+        if (this.dom_prob) {
+          this.dom_prob.remove();
+          this.dom_prob = null;
+        }
       } else if (this.dom_hex.find('.probability').length === 0) {
         this.dom_hex.find('.hex-image').append(PROBABILITY_NODE);
+        this.dom_prob = this.dom_hex.find('.probability');
       }
       return this;
     };
 
     Hex.prototype.circularize_probability = function() {
-      var max_dim, prob;
-      prob = this.dom_hex.find('.probability');
-      max_dim = _.max([prob.width(), prob.height()]);
-      prob.width(max_dim);
-      prob.height(max_dim);
+      var max_dim;
+      this.dom_prob.css({
+        'width': 'auto',
+        'height': 'auto'
+      });
+      max_dim = _.max([this.dom_prob.width(), this.dom_prob.height()]);
+      this.dom_prob.width(max_dim);
+      this.dom_prob.height(max_dim);
       return this;
     };
 
