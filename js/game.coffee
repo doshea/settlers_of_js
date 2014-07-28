@@ -10,7 +10,18 @@ window.game =
   find_player: (id) ->
     @players[parseInt(id)-1]
 
-  add_hex: ->
+  add_row: (hex_count) ->
+    indent_cols = Math.max.apply( Math, HEX_ROWS ) - hex_count
+    adjustment = 0
+    if indent_cols > 0
+      adjustment = (indent_cols - 0.5)*HEX_WIDTH_EM
+    new_row = $('<div>')
+      .addClass('hex-row')
+      .appendTo('#board')
+      .css('margin-left', "#{adjustment}em")
+    game.add_hex(new_row) for hex in [1..hex_count]
+
+  add_hex: (row) ->
     new Hex
 
   find_hex: (id) ->
@@ -76,7 +87,7 @@ $(document).ready ->
   # begin with two players
   game.add_player() for player in [1..STARTING_PLAYERS]
   game.add_row() for row in HEX_ROWS
-  game.add_hex() for hex in [1..HEX_COUNT]
+  
 
 
   $('#players').on 'click', '.player', ->
