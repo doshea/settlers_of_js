@@ -19,7 +19,53 @@
     <label>Players:</label>
     <div id='players'></div>
     <button onclick="game.add_player()">Add Player</button>
+    <button onclick="game.populate_hexes()">Reset Hexes</button>
+    <button onclick="game.populate_probabilities()">Reset Probabilities</button>
 
+    <table id='resource_yields'>
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Hexes</th>
+          <th>Dots</th>
+          <th>Mean Output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brick</td>
+          <td>
+          <td>
+          <td>
+        </tr>
+        <tr>
+          <td>
+          <td>
+          <td>
+          <td>
+        </tr>
+        <tr>
+          <td>
+          <td>
+          <td>
+          <td>
+        </tr>
+        <tr>
+          <td>
+          <td>
+          <td>
+          <td>
+        </tr>
+        <tr>
+          <td>
+          <td>
+          <td>
+          <td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- The lovely hex images were designed by Ryan Schenk (http://ryanschenk.com/2010/11/settlers-of-catan-tiles/) -->
     <div id='board'></div>
     
     <div id='log'>

@@ -19,27 +19,29 @@ window.game =
       .addClass('hex-row')
       .css('margin-left', "#{adjustment}em")
       .appendTo('#board')
-    for hex in [1..row['hexes']]
-      new Hex(new_row)
-    unless row['landlocked']
-      new_row.children(':first-child, :last-child').addClass('sea').find('.hex-image').addClass('sea')
-
+    for i in [1..row['hexes']]
+      new_hex = new Hex(new_row)
+      unless row['landlocked']
+        if (i is 1) or (i is row['hexes'])
+          new_hex.set_type('sea')
 
   find_hex: (id) ->
     @hexes[parseInt(id)-1]
 
   populate_hexes: ->
     shuffled_hexes = _.shuffle(HEX_DECK)
-    $('.hex:not(.sea)')
-      .removeClass('brick ore wood wheat sheep desert')
-      .find('.hex-image')
-      .removeClass('brick ore wood wheat sheep desert')
-    for hex in $('.hex:not(.sea)')
-      resource = shuffled_hexes.pop()
-      $(hex).addClass(resource)
-      $(hex).find('.hex-image').addClass(resource)
+    for hex in game.hexes
+      unless hex.type is 'sea'
+        hex.set_type(shuffled_hexes.pop())
+    @populate_probabilities()
     log.msg('Populated hexes.')
-
+  populate_probabilities: ->
+    shuffled_probs = _.shuffle(PROBABILITY_DECK)
+    for hex in game.hexes
+      unless _.contains(['sea', 'desert'], hex.type)
+        drawn_prob = shuffled_probs.pop()
+        hex.set_roll(drawn_prob['roll'])
+        hex.set_dots(drawn_prob['dots'])
 
 window.bank =
   sheep: RESOURCE_MAX
@@ -86,14 +88,63 @@ class Player
   colored_el: (el, content) ->
     "<#{el} style='color: rgb(#{@rgb()});'>#{content}</#{el}>"
 
+window.stats = 
+  calculate_yields: ->
+    resource_hexes = $('.hex:not(.sea, .desert)')
+    bricks = resource_hexes.filter('.brick')
+    ore = resource_hexes.filter('.ore')
+    wood = resource_hexes.filter('.wood')
+    wheat = resource_hexes.filter('.wheat')
+    sheep = resource_hexes.filter('.sheep')
+
+
+
 class Hex
   constructor: (row)->
-    @dom_hex = @build_hex(row)
+    game.hexes.push this
+    @id = game.hexes.length
+    @type = @roll = @dots = null
 
+    @dom_hex = @build_hex(row)
+  find_hex: (id) ->
+    @hexes[parseInt(id)-1]
   build_hex: (row)->
     hex = $(HEXAGON_NODE)
+      .data('hex-id', @id)
       .appendTo(row)
-
+  clear: ->
+    @type = @roll = @dots = null
+    @
+  set_type: (new_type) ->
+    @type = new_type
+    @dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type)
+    @add_remove_probability()
+    @
+  add_remove_probability: ->
+    if _.contains(['sea','desert'], @type)
+      @dom_hex.find('.probability').remove()
+    else if @dom_hex.find('.probability').length is 0
+      @dom_hex.find('.hex-image').append(PROBABILITY_NODE)
+    @
+  circularize_probability: ->
+    prob = @dom_hex.find('.probability')
+    max_dim = _.max([prob.width(),prob.height()])
+    prob.width(max_dim)
+    prob.height(max_dim)
+    @
+  set_dots: (new_dots) ->
+    @dots = new_dots
+    dot_string = ''
+    for i in [1..new_dots]
+      dot_string = dot_string + '&bull;'
+    @dom_hex.find('.dots').html(dot_string)
+    @circularize_probability()
+    @
+  set_roll: (new_roll) ->
+    @roll = new_roll
+    @dom_hex.find('.roll').text(@roll)
+    @circularize_probability()
+    @
 
 $(document).ready ->
   # begin with two players

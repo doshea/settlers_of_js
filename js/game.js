@@ -14,35 +14,60 @@
       return this.players[parseInt(id) - 1];
     },
     add_row: function(row) {
-      var adjustment, hex, indent_cols, new_row, _i, _ref;
+      var adjustment, i, indent_cols, new_hex, new_row, _i, _ref, _results;
       indent_cols = _.max(_.pluck(HEX_ROWS, 'hexes')) - row['hexes'];
       adjustment = 0;
       if (indent_cols > 0) {
         adjustment = indent_cols * (0.9 * HEX_WIDTH_EM + HEX_SPACING);
       }
       new_row = $('<div>').addClass('hex-row').css('margin-left', "" + adjustment + "em").appendTo('#board');
-      for (hex = _i = 1, _ref = row['hexes']; 1 <= _ref ? _i <= _ref : _i >= _ref; hex = 1 <= _ref ? ++_i : --_i) {
-        new Hex(new_row);
+      _results = [];
+      for (i = _i = 1, _ref = row['hexes']; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
+        new_hex = new Hex(new_row);
+        if (!row['landlocked']) {
+          if ((i === 1) || (i === row['hexes'])) {
+            _results.push(new_hex.set_type('sea'));
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
       }
-      if (!row['landlocked']) {
-        return new_row.children(':first-child, :last-child').addClass('sea').find('.hex-image').addClass('sea');
-      }
+      return _results;
     },
     find_hex: function(id) {
       return this.hexes[parseInt(id) - 1];
     },
     populate_hexes: function() {
-      var hex, resource, shuffled_hexes, _i, _len, _ref;
+      var hex, shuffled_hexes, _i, _len, _ref;
       shuffled_hexes = _.shuffle(HEX_DECK);
-      $('.hex:not(.sea)').removeClass('brick ore wood wheat sheep desert').find('.hex-image').removeClass('brick ore wood wheat sheep desert');
-      _ref = $('.hex:not(.sea)');
+      _ref = game.hexes;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         hex = _ref[_i];
-        resource = shuffled_hexes.pop();
-        $(hex).addClass(resource);
-        $(hex).find('.hex-image').addClass(resource);
+        if (hex.type !== 'sea') {
+          hex.set_type(shuffled_hexes.pop());
+        }
       }
+      this.populate_probabilities();
       return log.msg('Populated hexes.');
+    },
+    populate_probabilities: function() {
+      var drawn_prob, hex, shuffled_probs, _i, _len, _ref, _results;
+      shuffled_probs = _.shuffle(PROBABILITY_DECK);
+      _ref = game.hexes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        hex = _ref[_i];
+        if (!_.contains(['sea', 'desert'], hex.type)) {
+          drawn_prob = shuffled_probs.pop();
+          hex.set_roll(drawn_prob['roll']);
+          _results.push(hex.set_dots(drawn_prob['dots']));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
     }
   };
 
@@ -102,14 +127,82 @@
 
   })();
 
+  window.stats = {
+    calculate_yields: function() {
+      var bricks, ore, resource_hexes, sheep, wheat, wood;
+      resource_hexes = $('.hex:not(.sea, .desert)');
+      bricks = resource_hexes.filter('.brick');
+      ore = resource_hexes.filter('.ore');
+      wood = resource_hexes.filter('.wood');
+      wheat = resource_hexes.filter('.wheat');
+      return sheep = resource_hexes.filter('.sheep');
+    }
+  };
+
   Hex = (function() {
     function Hex(row) {
+      game.hexes.push(this);
+      this.id = game.hexes.length;
+      this.type = this.roll = this.dots = null;
       this.dom_hex = this.build_hex(row);
     }
 
+    Hex.prototype.find_hex = function(id) {
+      return this.hexes[parseInt(id) - 1];
+    };
+
     Hex.prototype.build_hex = function(row) {
       var hex;
-      return hex = $(HEXAGON_NODE).appendTo(row);
+      return hex = $(HEXAGON_NODE).data('hex-id', this.id).appendTo(row);
+    };
+
+    Hex.prototype.clear = function() {
+      this.type = this.roll = this.dots = null;
+      return this;
+    };
+
+    Hex.prototype.set_type = function(new_type) {
+      this.type = new_type;
+      this.dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type);
+      this.add_remove_probability();
+      return this;
+    };
+
+    Hex.prototype.add_remove_probability = function() {
+      if (_.contains(['sea', 'desert'], this.type)) {
+        this.dom_hex.find('.probability').remove();
+      } else if (this.dom_hex.find('.probability').length === 0) {
+        this.dom_hex.find('.hex-image').append(PROBABILITY_NODE);
+      }
+      return this;
+    };
+
+    Hex.prototype.circularize_probability = function() {
+      var max_dim, prob;
+      prob = this.dom_hex.find('.probability');
+      max_dim = _.max([prob.width(), prob.height()]);
+      prob.width(max_dim);
+      prob.height(max_dim);
+      return this;
+    };
+
+    Hex.prototype.set_dots = function(new_dots) {
+      var dot_string, i, _i;
+      this.dots = new_dots;
+      dot_string = '';
+      for (i = _i = 1; 1 <= new_dots ? _i <= new_dots : _i >= new_dots; i = 1 <= new_dots ? ++_i : --_i) {
+        dot_string = dot_string + '&bull;';
+      }
+      this.dom_hex.find('.dots').html(dot_string);
+      this.circularize_probability();
+      return this;
+    };
+
+    Hex.prototype.set_roll = function(new_roll) {
+      this.roll = new_roll;
+      this.dom_hex.find('.roll').text(this.roll);
+      this.circularize_probability();
+      return this;
     };
 
     return Hex;

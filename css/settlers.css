@@ -124,43 +124,22 @@
   background-image: url('../img/desert.jpg');
 }
 
-
-
-
-
-/*.hex {
-  float: left;
-  position: relative;
-  width: 9.375em;
-  height: 5.4125em;
-  background-color: white;
-  margin: 1.40625em 0.5em;
-  border-left: solid 1px black;
-  border-right: solid 1px black;
+.circle {
+  border-radius: 50%;
 }
-
-.hex:before,
-.hex:after {
-  content: "";
+.hex:hover .probability {
+  opacity: 1;
+}
+.probability {
+  text-align: center;
+  border: 1px solid black;
+  opacity: 0.6;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  background: white;
   position: absolute;
-  z-index: 1;
-  width: 6.629em;
-  height: 6.629em;
-  -webkit-transform: scaleY(0.5774) rotate(-45deg);
-  -ms-transform: scaleY(0.5774) rotate(-45deg);
-  transform: scaleY(0.5774) rotate(-45deg);
-  background-color: inherit;
-  left: 1.31em;
+  left: 50%;
+  top: 50%;
 }
-
-.hex:before {
-  top: -53.0330px;
-  border-top: solid 1.4142px black;
-  border-right: solid 1.4142px black;
-}
-
-.hex:after {
-  bottom: -53.0330px;
-  border-bottom: solid 1.4142px black;
-  border-left: solid 1.4142px black;
-}*/
