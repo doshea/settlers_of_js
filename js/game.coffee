@@ -129,6 +129,9 @@ class Hex
   circularize_probability: ->
     prob = @dom_hex.find('.probability')
     max_dim = _.max([prob.width(),prob.height()])
+    prob.css
+      'width':'auto'
+      'height':'auto'
     prob.width(max_dim)
     prob.height(max_dim)
     @
