@@ -10,22 +10,35 @@ window.game =
   find_player: (id) ->
     @players[parseInt(id)-1]
 
-  add_row: (hex_count) ->
-    indent_cols = Math.max.apply( Math, HEX_ROWS ) - hex_count
+  add_row: (row) ->
+    indent_cols = _.max(_.pluck(HEX_ROWS, 'hexes')) - row['hexes']
     adjustment = 0
     if indent_cols > 0
-      adjustment = (indent_cols - 0.5)*HEX_WIDTH_EM
+      adjustment = indent_cols * (0.9 * HEX_WIDTH_EM + HEX_SPACING)
     new_row = $('<div>')
       .addClass('hex-row')
-      .appendTo('#board')
       .css('margin-left', "#{adjustment}em")
-    game.add_hex(new_row) for hex in [1..hex_count]
+      .appendTo('#board')
+    for hex in [1..row['hexes']]
+      new Hex(new_row)
+    unless row['landlocked']
+      new_row.children(':first-child, :last-child').addClass('sea').find('.hex-image').addClass('sea')
 
-  add_hex: (row) ->
-    new Hex
 
   find_hex: (id) ->
     @hexes[parseInt(id)-1]
+
+  populate_hexes: ->
+    shuffled_hexes = _.shuffle(HEX_DECK)
+    $('.hex:not(.sea)')
+      .removeClass('brick ore wood wheat sheep desert')
+      .find('.hex-image')
+      .removeClass('brick ore wood wheat sheep desert')
+    for hex in $('.hex:not(.sea)')
+      resource = shuffled_hexes.pop()
+      $(hex).addClass(resource)
+      $(hex).find('.hex-image').addClass(resource)
+    log.msg('Populated hexes.')
 
 
 window.bank =
@@ -74,19 +87,19 @@ class Player
     "<#{el} style='color: rgb(#{@rgb()});'>#{content}</#{el}>"
 
 class Hex
-  constructor: ->
-    @dom_hex = @build_hex()
+  constructor: (row)->
+    @dom_hex = @build_hex(row)
 
-  build_hex: ->
-    hex = $('<div>')
-      .addClass('hex')
-      .appendTo($('#board'))
+  build_hex: (row)->
+    hex = $(HEXAGON_NODE)
+      .appendTo(row)
 
 
 $(document).ready ->
   # begin with two players
   game.add_player() for player in [1..STARTING_PLAYERS]
-  game.add_row() for row in HEX_ROWS
+  game.add_row(row) for row in HEX_ROWS
+  game.populate_hexes()
   
 
 

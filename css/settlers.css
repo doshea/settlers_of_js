@@ -10,19 +10,131 @@
 
 /* BOARD */
 #board {
-  background-color: skyblue;
-  min-width: 300px;
-  max-width: 1200px;
+  min-width: 18.75em;
+  max-width: 75em;
+  min-height: 50em;
   width: 80%;
   height: 80%;
 }
+
+.hex-row {
+  height: 5em;
+}
+
+/* LOG */
+#log {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  width: 14em;
+  max-height: 20em;
+}
+#log-msgs {
+  list-style-type: none;
+  font-size: smaller;
+  overflow: auto;
+  max-height: 19em;
+  width: inherit;
+  margin: 0.5em 0;
+  padding: 0; 
+}
+
+
+.h {
+  overflow: hidden;
+  visibility: hidden;
+  -webkit-transform: rotate(150deg);
+  -moz-transform: rotate(150deg);
+  -o-transform: rotate(150deg);
+  transform: rotate(150deg);
+  cursor: pointer;
+}
+
 .hex {
+  width: 9.375em;
+  height: 10.78125em;
+  position: relative;
+  display: inline-block;
+  margin: -0.8em 4.2em;
+}
+
+.hex-1 {
+  position: absolute;
+  width: 9.375em;
+  height: 18.75em;
+  top: -3.984em;
+}
+.hex-2 {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: rotate(-60deg);
+  -moz-transform: rotate(-60deg);
+  -o-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+.hex-3 {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  visibility: visible;
+  background: whitesmoke;
+  -webkit-transform: rotate(-60deg);
+  -moz-transform: rotate(-60deg);
+  -o-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+.hex-image {
+  visibility: visible;
+  width: 114.4%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  -webkit-background-size: 150%;
+  -moz-background-size: 150%;
+  background-size: 150%;
+  -webkit-transform: rotate(-30deg);
+  -moz-transform: rotate(-30deg);
+  -o-transform: rotate(-30deg);
+  transform: rotate(-30deg);
+  margin-left: -7.1%;
+
+}
+.hex-image.sea {
+  background-image: url('../img/sea.jpg');
+}
+.hex-image.brick {
+  background-image: url('../img/brick.jpg');
+}
+.hex-image.ore {
+  background-image: url('../img/ore.jpg');
+}
+.hex-image.wood {
+  background-image: url('../img/wood.jpg');
+}
+.hex-image.wheat {
+  background-image: url('../img/wheat.jpg');
+}
+.hex-image.sheep {
+  background-image: url('../img/sheep.jpg');
+}
+.hex-image.desert {
+  background-image: url('../img/desert.jpg');
+}
+
+
+
+
+
+/*.hex {
   float: left;
   position: relative;
   width: 9.375em;
   height: 5.4125em;
   background-color: white;
-  margin: 2.70625em 0;
+  margin: 1.40625em 0.5em;
   border-left: solid 1px black;
   border-right: solid 1px black;
 }
@@ -51,24 +163,4 @@
   bottom: -53.0330px;
   border-bottom: solid 1.4142px black;
   border-left: solid 1.4142px black;
-}
-
-/* LOG */
-#log {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 2px solid black;
-  border-left: 2px solid black;
-  width: 14em;
-  max-height: 20em;
-}
-#log-msgs {
-  list-style-type: none;
-  font-size: smaller;
-  overflow: auto;
-  max-height: 19em;
-  width: inherit;
-  margin: 0.5em 0;
-  padding: 0; 
-}
+}*/

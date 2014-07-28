@@ -13,11 +13,36 @@
     find_player: function(id) {
       return this.players[parseInt(id) - 1];
     },
-    add_hex: function() {
-      return new Hex;
+    add_row: function(row) {
+      var adjustment, hex, indent_cols, new_row, _i, _ref;
+      indent_cols = _.max(_.pluck(HEX_ROWS, 'hexes')) - row['hexes'];
+      adjustment = 0;
+      if (indent_cols > 0) {
+        adjustment = indent_cols * (0.9 * HEX_WIDTH_EM + HEX_SPACING);
+      }
+      new_row = $('<div>').addClass('hex-row').css('margin-left', "" + adjustment + "em").appendTo('#board');
+      for (hex = _i = 1, _ref = row['hexes']; 1 <= _ref ? _i <= _ref : _i >= _ref; hex = 1 <= _ref ? ++_i : --_i) {
+        new Hex(new_row);
+      }
+      if (!row['landlocked']) {
+        return new_row.children(':first-child, :last-child').addClass('sea').find('.hex-image').addClass('sea');
+      }
     },
     find_hex: function(id) {
       return this.hexes[parseInt(id) - 1];
+    },
+    populate_hexes: function() {
+      var hex, resource, shuffled_hexes, _i, _len, _ref;
+      shuffled_hexes = _.shuffle(HEX_DECK);
+      $('.hex:not(.sea)').removeClass('brick ore wood wheat sheep desert').find('.hex-image').removeClass('brick ore wood wheat sheep desert');
+      _ref = $('.hex:not(.sea)');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        hex = _ref[_i];
+        resource = shuffled_hexes.pop();
+        $(hex).addClass(resource);
+        $(hex).find('.hex-image').addClass(resource);
+      }
+      return log.msg('Populated hexes.');
     }
   };
 
@@ -78,13 +103,13 @@
   })();
 
   Hex = (function() {
-    function Hex() {
-      this.dom_hex = this.build_hex();
+    function Hex(row) {
+      this.dom_hex = this.build_hex(row);
     }
 
-    Hex.prototype.build_hex = function() {
+    Hex.prototype.build_hex = function(row) {
       var hex;
-      return hex = $('<div>').addClass('hex').appendTo($('#board'));
+      return hex = $(HEXAGON_NODE).appendTo(row);
     };
 
     return Hex;
@@ -92,13 +117,15 @@
   })();
 
   $(document).ready(function() {
-    var hex, player, _i, _j;
+    var player, row, _i, _j, _len;
     for (player = _i = 1; 1 <= STARTING_PLAYERS ? _i <= STARTING_PLAYERS : _i >= STARTING_PLAYERS; player = 1 <= STARTING_PLAYERS ? ++_i : --_i) {
       game.add_player();
     }
-    for (hex = _j = 1; 1 <= HEX_COUNT ? _j <= HEX_COUNT : _j >= HEX_COUNT; hex = 1 <= HEX_COUNT ? ++_j : --_j) {
-      game.add_hex();
+    for (_j = 0, _len = HEX_ROWS.length; _j < _len; _j++) {
+      row = HEX_ROWS[_j];
+      game.add_row(row);
     }
+    game.populate_hexes();
     return $('#players').on('click', '.player', function() {
       var id;
       $('.active').removeClass('active');
