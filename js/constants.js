@@ -35,6 +35,7 @@ _.each(HEX_PROBABILITIES, function(prob){
 
 var HEX_WIDTH_EM = 9.375;
 var HEX_SPACING = 0.5;
+var RESOURCES = ['wood', 'brick', 'wheat', 'ore', 'sheep']
 var HEX_VALUES = {
                   'brick': 3,
                   'ore': 3,

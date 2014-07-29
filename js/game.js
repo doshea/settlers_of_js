@@ -14,13 +14,8 @@
       return this.players[parseInt(id) - 1];
     },
     add_row: function(row) {
-      var adjustment, i, indent_cols, new_hex, new_row, _i, _ref, _results;
-      indent_cols = _.max(_.pluck(HEX_ROWS, 'hexes')) - row['hexes'];
-      adjustment = 0;
-      if (indent_cols > 0) {
-        adjustment = indent_cols * (0.9 * HEX_WIDTH_EM + HEX_SPACING);
-      }
-      new_row = $('<div>').addClass('hex-row').css('margin-left', "" + adjustment + "em").appendTo('#board');
+      var i, new_hex, new_row, _i, _ref, _results;
+      new_row = $('<div>').addClass('hex-row').appendTo('#board');
       _results = [];
       for (i = _i = 1, _ref = row['hexes']; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
         new_hex = new Hex(new_row);
@@ -53,21 +48,18 @@
       return log.msg('Populated hexes.');
     },
     populate_probabilities: function() {
-      var drawn_prob, hex, shuffled_probs, _i, _len, _ref, _results;
+      var drawn_prob, hex, shuffled_probs, _i, _len, _ref;
       shuffled_probs = _.shuffle(PROBABILITY_DECK);
       _ref = game.hexes;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         hex = _ref[_i];
         if (!_.contains(['sea', 'desert'], hex.type)) {
           drawn_prob = shuffled_probs.pop();
           hex.set_roll(drawn_prob['roll']);
-          _results.push(hex.set_dots(drawn_prob['dots']));
-        } else {
-          _results.push(void 0);
+          hex.set_dots(drawn_prob['dots']);
         }
       }
-      return _results;
+      return stats.calculate_yields();
     }
   };
 
@@ -129,12 +121,25 @@
 
   window.stats = {
     calculate_yields: function() {
-      var bricks, ore, sheep, wheat, wood;
-      bricks = _.filter('.brick');
-      ore = resource_hexes.filter('.ore');
-      wood = resource_hexes.filter('.wood');
-      wheat = resource_hexes.filter('.wheat');
-      return sheep = resource_hexes.filter('.sheep');
+      var binned_hexes, hexes_by_resource;
+      $('#resource-yields tbody').empty();
+      hexes_by_resource = _.map(RESOURCES, function(resource) {
+        return _.filter(game.hexes, function(hex) {
+          return hex.type === resource;
+        });
+      });
+      binned_hexes = _.object(RESOURCES, hexes_by_resource);
+      return _.each(binned_hexes, function(v, k) {
+        var dot_count, hex_count, resource_name, row, total_dots;
+        total_dots = _.reduce(v, function(memo, hex) {
+          return memo + hex.dots;
+        }, 0);
+        row = $('<tr>');
+        resource_name = $('<td>').text(k).appendTo(row);
+        hex_count = $('<td>').text(v.length).appendTo(row);
+        dot_count = $('<td>').text(total_dots).appendTo(row);
+        return row.appendTo($('#resource-yields tbody'));
+      });
     }
   };
 
@@ -184,18 +189,6 @@
       return this;
     };
 
-    Hex.prototype.circularize_probability = function() {
-      var max_dim;
-      this.dom_prob.css({
-        'width': 'auto',
-        'height': 'auto'
-      });
-      max_dim = _.max([this.dom_prob.width(), this.dom_prob.height()]);
-      this.dom_prob.width(max_dim);
-      this.dom_prob.height(max_dim);
-      return this;
-    };
-
     Hex.prototype.set_dots = function(new_dots) {
       var dot_string, i, _i;
       this.dots = new_dots;
@@ -204,14 +197,12 @@
         dot_string = dot_string + '&bull;';
       }
       this.dom_hex.find('.dots').html(dot_string);
-      this.circularize_probability();
       return this;
     };
 
     Hex.prototype.set_roll = function(new_roll) {
       this.roll = new_roll;
       this.dom_hex.find('.roll').text(this.roll);
-      this.circularize_probability();
       return this;
     };
 

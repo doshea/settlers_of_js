@@ -1,0 +1,236 @@
+$font-size: 16px;
+$font-conversion: 1em/$font-size;
+$hex-original-pixel-width: 150px;
+$hex-original-pixel-height: 172.5px;
+$hex-hw-ratio: $hex-original-pixel-width / $hex-original-pixel-height;
+
+$hex-new-pixel-width: 115px;
+$hex-scale: $hex-new-pixel-width/$hex-original-pixel-width;
+$hex-width: $hex-new-pixel-width * $font-conversion;
+
+$land-tone-scale: 4.35;
+
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  position: fixed;
+}
+
+.player {
+  width: 1em;
+  height: 1em;
+  border-style: solid;
+  display: inline-block;
+
+  &:not(.active){
+    border-color: white !important;
+  }
+}
+
+/* BOARD */
+#board-pane {
+  text-align: center;
+  padding: 2em 0;
+}
+#board {
+  position: relative;
+  margin: 0 auto;
+  display: inline-block;
+  padding-bottom: 4em*$hex-scale;
+}
+
+.hex-row {
+  margin-bottom: -4em*$hex-scale;
+  text-align: left;
+
+  &:nth-child(2), &:last-child {
+    margin-left: 3 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
+  }
+  &:nth-child(3), &:nth-last-child(2) {
+    margin-left: 2 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
+  }
+  &:nth-child(4), &:nth-child(6), &:nth-child(8), &:nth-child(10), &:nth-last-child(3) {
+    margin-left: 1 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
+  }
+}
+
+/* LOG */
+#log {
+  background: whitesmoke;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  width: 14em;
+  max-height: 20em;
+  padding: 0 0.5em;
+}
+#log-msgs {
+  list-style-type: none;
+  font-size: smaller;
+  overflow: auto;
+  max-height: 19em;
+  width: inherit;
+  margin: 0.5em 0;
+  padding: 0; 
+}
+
+
+.h {
+  overflow: hidden;
+  visibility: hidden;
+  -webkit-transform: rotate(150deg);
+  -moz-transform: rotate(150deg);
+  -o-transform: rotate(150deg);
+  transform: rotate(150deg);
+  cursor: pointer;
+}
+#land-tone {
+  position: absolute;
+  width: $hex-width * $land-tone-scale;
+  height: $hex-width * 2 * $land-tone-scale;
+  left: 15.6%;
+  top: -0.8%;
+
+
+  .hex-1 {
+    width: $hex-width * $land-tone-scale;
+    height: $hex-width * 2 * $land-tone-scale;
+  }
+  .h {
+    -webkit-transform: rotate(120deg);
+    -moz-transform: rotate(120deg);
+    -o-transform: rotate(120deg);
+    transform: rotate(120deg);
+  }
+  .hex-3 {
+    background: #888;
+  }
+}
+
+.hex {
+  width: $hex-width;
+  height: $hex-width/$hex-hw-ratio;
+  position: relative;
+  display: inline-block;
+  margin: -0.8em*$hex-scale 4.2em*$hex-scale;
+}
+
+.hex-1 {
+  position: absolute;
+  width: $hex-width;
+  height: $hex-width*2;
+  top: -3.984em*$hex-scale;
+}
+.hex-2 {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: rotate(-60deg);
+  -moz-transform: rotate(-60deg);
+  -o-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+.hex-3 {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  visibility: visible;
+  background: whitesmoke;
+  -webkit-transform: rotate(-60deg);
+  -moz-transform: rotate(-60deg);
+  -o-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+.hex-image {
+  visibility: visible;
+  width: 114.4%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  -webkit-background-size: 150%;
+  -moz-background-size: 150%;
+  background-size: 150%;
+  -webkit-transform: rotate(-30deg);
+  -moz-transform: rotate(-30deg);
+  -o-transform: rotate(-30deg);
+  transform: rotate(-30deg);
+  margin-left: -7.1%;
+
+  &.sea {
+    background-image: url('../img/sea.jpg');
+  }
+  &.brick {
+    background-image: url('../img/brick.jpg');
+  }
+  &.ore {
+    background-image: url('../img/ore.jpg');
+  }
+  &.wood {
+    background-image: url('../img/wood.jpg');
+  }
+  &.wheat {
+    background-image: url('../img/wheat.jpg');
+  }
+  &.sheep {
+    background-image: url('../img/sheep.jpg');
+  }
+  &.desert {
+    background-image: url('../img/desert.jpg');
+  }
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.probability {
+  text-align: center;
+  border: 1px solid black;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  background: white;
+  position: relative;
+  top: 42.5%;
+  margin: 0 auto;
+  width: 44px * $font-conversion;
+  height: 44px * $font-conversion;
+
+  .roll {
+    padding-top: 0.25em*$hex-scale;
+  }
+  .dots {
+    padding-bottom: 0.25em*$hex-scale;
+  }
+}
+
+#robber-container {
+  position: absolute;
+  z-index: 10;
+  width: 2em*$hex-scale;
+  height: 5em*$hex-scale;
+  left: 20%;
+  top: -2%;
+
+  img{
+    height: 100%;
+    position: absolute;
+  }
+}
+#robber {
+  z-index: 1;
+}
+#robber-shadow {
+  -webkit-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  -moz-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  -o-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  transform: translate(1.8em*$hex-scale, 4.6em*$hex-scale) rotate(150deg) scale(0.8,1.4);
+  opacity: 0.8;
+}

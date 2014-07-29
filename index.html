@@ -16,66 +16,50 @@
 
   </head>
   <body>
-    <label>Players:</label>
-    <div id='players'></div>
-    <button onclick="game.add_player()">Add Player</button>
-    <button onclick="game.populate_hexes()">Reset Hexes</button>
-    <button onclick="game.populate_probabilities()">Reset Probabilities</button>
+    <header>
+      <label>Players:</label>
+      <div id='players'></div>
+      <button onclick="game.add_player()">Add Player</button>
+      <button onclick="game.populate_hexes()">Reset Hexes</button>
+      <button onclick="game.populate_probabilities()">Reset Probabilities</button>
+      <table id='resource-yields'>
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>Hexes</th>
+            <th>Dots</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </header>
 
-    <table id='resource_yields'>
-      <thead>
-        <tr>
-          <th>Resource</th>
-          <th>Hexes</th>
-          <th>Dots</th>
-          <th>Mean Output</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Brick</td>
-          <td>
-          <td>
-          <td>
-        </tr>
-        <tr>
-          <td>
-          <td>
-          <td>
-          <td>
-        </tr>
-        <tr>
-          <td>
-          <td>
-          <td>
-          <td>
-        </tr>
-        <tr>
-          <td>
-          <td>
-          <td>
-          <td>
-        </tr>
-        <tr>
-          <td>
-          <td>
-          <td>
-          <td>
-        </tr>
-      </tbody>
-    </table>
+
 
     <!-- The lovely hex images were designed by Ryan Schenk (http://ryanschenk.com/2010/11/settlers-of-catan-tiles/) -->
-    <div id='board'>
-      <div id='robber-container'>
-        <img src='img/robber.png' id='robber'>
-        <img src='img/robber_shadow.png' id='robber-shadow'>
+    <div id='board-pane'>
+      <div id='board'>
+        <div id='robber-container'>
+          <img src='img/robber.png' id='robber'>
+          <img src='img/robber_shadow.png' id='robber-shadow'>
+        </div>
+        <div class='hex' id='land-tone'>
+          <div class='hex-1 h'>
+            <div class='hex-2 h'>
+              <div class='hex-3 h'>
+                <div class='hex-image h'></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    
     <div id='log'>
       <ul id='log-msgs'>
         <li class='log-msg'><b>Welcome to Settlers of JS</b></span>
+        <hr>
       </ul>
     </div>
 

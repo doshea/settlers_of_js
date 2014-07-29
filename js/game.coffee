@@ -11,13 +11,8 @@ window.game =
     @players[parseInt(id)-1]
 
   add_row: (row) ->
-    indent_cols = _.max(_.pluck(HEX_ROWS, 'hexes')) - row['hexes']
-    adjustment = 0
-    if indent_cols > 0
-      adjustment = indent_cols * (0.9 * HEX_WIDTH_EM + HEX_SPACING)
     new_row = $('<div>')
       .addClass('hex-row')
-      .css('margin-left', "#{adjustment}em")
       .appendTo('#board')
     for i in [1..row['hexes']]
       new_hex = new Hex(new_row)
@@ -42,6 +37,7 @@ window.game =
         drawn_prob = shuffled_probs.pop()
         hex.set_roll(drawn_prob['roll'])
         hex.set_dots(drawn_prob['dots'])
+    stats.calculate_yields()
 
 window.bank =
   sheep: RESOURCE_MAX
@@ -90,13 +86,19 @@ class Player
 
 window.stats = 
   calculate_yields: ->
-    bricks = _.filter('.brick')
-    ore = resource_hexes.filter('.ore')
-    wood = resource_hexes.filter('.wood')
-    wheat = resource_hexes.filter('.wheat')
-    sheep = resource_hexes.filter('.sheep')
-
-
+    $('#resource-yields tbody').empty()
+    hexes_by_resource = _.map RESOURCES, (resource) ->
+      _.filter(game.hexes, (hex) -> hex.type is resource)
+    binned_hexes = _.object(RESOURCES, hexes_by_resource)
+    _.each binned_hexes, (v,k) ->
+      total_dots = _.reduce(v, (memo, hex) ->
+        memo + hex.dots; 
+      , 0)
+      row = $('<tr>')
+      resource_name = $('<td>').text(k).appendTo(row)
+      hex_count = $('<td>').text(v.length).appendTo(row)
+      dot_count = $('<td>').text(total_dots).appendTo(row)
+      row.appendTo($('#resource-yields tbody'))
 
 class Hex
   constructor: (row)->
@@ -131,27 +133,27 @@ class Hex
       @dom_hex.find('.hex-image').append(PROBABILITY_NODE)
       @dom_prob = @dom_hex.find('.probability')
     @
-  circularize_probability: ->
-    @dom_prob.css(
-      'width':'auto',
-      'height':'auto'
-    )
-    max_dim = _.max([@dom_prob.width(),@dom_prob.height()])
-    @dom_prob.width(max_dim)
-    @dom_prob.height(max_dim)
-    @
+  # circularize_probability: ->
+  #   @dom_prob.css(
+  #     'width':'auto',
+  #     'height':'auto'
+  #   )
+  #   max_dim = _.max([@dom_prob.width(),@dom_prob.height()])
+  #   @dom_prob.width(max_dim)
+  #   @dom_prob.height(max_dim)
+  #   @
   set_dots: (new_dots) ->
     @dots = new_dots
     dot_string = ''
     for i in [1..new_dots]
       dot_string = dot_string + '&bull;'
     @dom_hex.find('.dots').html(dot_string)
-    @circularize_probability()
+    # @circularize_probability()
     @
   set_roll: (new_roll) ->
     @roll = new_roll
     @dom_hex.find('.roll').text(@roll)
-    @circularize_probability()
+    # @circularize_probability()
     @
   gain_robber: ->
     $('#robber-container').appendTo(@dom_hex)
