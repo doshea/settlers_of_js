@@ -2,6 +2,7 @@ window.game =
   players: []
   dev_cards: []  
   hexes: []
+  roads: []
   active_player: null
 
   add_player: ->
@@ -55,7 +56,7 @@ window.log =
 
 class Player
   constructor: ->
-    game.players.push this
+    game.players.push @
     @id = game.players.length
     @name = "Player #{@id}"
 
@@ -81,6 +82,7 @@ class Player
         'background-color': "rgb(#{@rgb()})"
         'border-color': "rgb(#{@anti_rgb()})"
       .appendTo($('#players'))
+    @
   colored_el: (el, content) ->
     "<#{el} style='color: rgb(#{@rgb()});'>#{content}</#{el}>"
 
@@ -108,8 +110,9 @@ class Hex
 
     @dom_hex = @build_hex(row)
     @dom_prob
-  find_hex: (id) ->
-    @hexes[parseInt(id)-1]
+    @roads = new Array(6)
+    @vertices = new Array(6)
+
   build_hex: (row)->
     hex = $(HEXAGON_NODE)
       .data('hex-id', @id)
@@ -133,15 +136,6 @@ class Hex
       @dom_hex.find('.hex-image').append(PROBABILITY_NODE)
       @dom_prob = @dom_hex.find('.probability')
     @
-  # circularize_probability: ->
-  #   @dom_prob.css(
-  #     'width':'auto',
-  #     'height':'auto'
-  #   )
-  #   max_dim = _.max([@dom_prob.width(),@dom_prob.height()])
-  #   @dom_prob.width(max_dim)
-  #   @dom_prob.height(max_dim)
-  #   @
   set_dots: (new_dots) ->
     @dots = new_dots
     dot_string = ''
@@ -157,6 +151,19 @@ class Hex
     @
   gain_robber: ->
     $('#robber-container').appendTo(@dom_hex)
+
+class Road
+  constructor: (hex, position) ->
+    game.roads.push @
+    @player
+    @dom_road
+    if position < 3
+      @above_hex = hex
+    else
+      @below_hex = hex
+  build_road: ->
+
+
 
 $(document).ready ->
   # begin with two players

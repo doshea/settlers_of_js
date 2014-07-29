@@ -33,10 +33,8 @@ _.each(HEX_PROBABILITIES, function(prob){
   }
 })
 
-var HEX_WIDTH_EM = 9.375;
-var HEX_SPACING = 0.5;
 var RESOURCES = ['wood', 'brick', 'wheat', 'ore', 'sheep']
-var HEX_VALUES = {
+var HEX_COUNTS = {
                   'brick': 3,
                   'ore': 3,
                   'wood': 4,
@@ -45,7 +43,7 @@ var HEX_VALUES = {
                   'desert': 1
                   };
 var HEX_DECK = [];
-_.each(HEX_VALUES, function(val, key){
+_.each(HEX_COUNTS, function(val, key){
   for(i=0; i<val; i++){
     HEX_DECK.push(key);
   }

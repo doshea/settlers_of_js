@@ -47,13 +47,13 @@ header {
   margin-bottom: -4em*$hex-scale;
   text-align: left;
 
-  &:nth-child(2), &:last-child {
+  &:first-child, &:last-child {
     margin-left: 3 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
   }
-  &:nth-child(3), &:nth-last-child(2) {
+  &:nth-child(2), &:nth-last-child(2) {
     margin-left: 2 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
   }
-  &:nth-child(4), &:nth-child(6), &:nth-child(8), &:nth-child(10), &:nth-last-child(3) {
+  &:nth-child(3), &:nth-child(5), &:nth-child(7), &:nth-last-child(5), &:nth-last-child(3) {
     margin-left: 1 * (0.9 * $hex-new-pixel-width * $font-conversion + 0.5em);
   }
 }
@@ -80,7 +80,6 @@ header {
   padding: 0; 
 }
 
-
 .h {
   overflow: hidden;
   visibility: hidden;
@@ -89,28 +88,6 @@ header {
   -o-transform: rotate(150deg);
   transform: rotate(150deg);
   cursor: pointer;
-}
-#land-tone {
-  position: absolute;
-  width: $hex-width * $land-tone-scale;
-  height: $hex-width * 2 * $land-tone-scale;
-  left: 15.6%;
-  top: -0.8%;
-
-
-  .hex-1 {
-    width: $hex-width * $land-tone-scale;
-    height: $hex-width * 2 * $land-tone-scale;
-  }
-  .h {
-    -webkit-transform: rotate(120deg);
-    -moz-transform: rotate(120deg);
-    -o-transform: rotate(120deg);
-    transform: rotate(120deg);
-  }
-  .hex-3 {
-    background: #888;
-  }
 }
 
 .hex {
@@ -141,7 +118,7 @@ header {
   height: 100%;
   overflow: hidden;
   visibility: visible;
-  background: whitesmoke;
+  background: black;
   -webkit-transform: rotate(-60deg);
   -moz-transform: rotate(-60deg);
   -o-transform: rotate(-60deg);
@@ -153,9 +130,9 @@ header {
   height: 100%;
   background-repeat: no-repeat;
   background-position: 50%;
-  -webkit-background-size: 150%;
-  -moz-background-size: 150%;
-  background-size: 150%;
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  background-size: 100%;
   -webkit-transform: rotate(-30deg);
   -moz-transform: rotate(-30deg);
   -o-transform: rotate(-30deg);
@@ -163,25 +140,29 @@ header {
   margin-left: -7.1%;
 
   &.sea {
-    background-image: url('../img/sea.jpg');
+    background-image: url('../img/sea2.png');
+
   }
   &.brick {
-    background-image: url('../img/brick.jpg');
+    background-image: url('../img/brick2.png');
   }
   &.ore {
     background-image: url('../img/ore.jpg');
+    -webkit-background-size: 150%;
+    -moz-background-size: 150%;
+    background-size: 150%;
   }
   &.wood {
-    background-image: url('../img/wood.jpg');
+    background-image: url('../img/wood2.png');
   }
   &.wheat {
-    background-image: url('../img/wheat.jpg');
+    background-image: url('../img/wheat2.png');
   }
   &.sheep {
-    background-image: url('../img/sheep.jpg');
+    background-image: url('../img/sheep2.png');
   }
   &.desert {
-    background-image: url('../img/desert.jpg');
+    background-image: url('../img/desert2.png');
   }
 }
 

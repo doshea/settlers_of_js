@@ -27,11 +27,11 @@ header {
 .hex-row {
   margin-bottom: -3.06667em;
   text-align: left; }
-  .hex-row:nth-child(2), .hex-row:last-child {
+  .hex-row:first-child, .hex-row:last-child {
     margin-left: 20.90625em; }
-  .hex-row:nth-child(3), .hex-row:nth-last-child(2) {
+  .hex-row:nth-child(2), .hex-row:nth-last-child(2) {
     margin-left: 13.9375em; }
-  .hex-row:nth-child(4), .hex-row:nth-child(6), .hex-row:nth-child(8), .hex-row:nth-child(10), .hex-row:nth-last-child(3) {
+  .hex-row:nth-child(3), .hex-row:nth-child(5), .hex-row:nth-child(7), .hex-row:nth-last-child(5), .hex-row:nth-last-child(3) {
     margin-left: 6.96875em; }
 
 /* LOG */
@@ -64,23 +64,6 @@ header {
   transform: rotate(150deg);
   cursor: pointer; }
 
-#land-tone {
-  position: absolute;
-  width: 31.26562em;
-  height: 62.53125em;
-  left: 15.6%;
-  top: -0.8%; }
-  #land-tone .hex-1 {
-    width: 31.26562em;
-    height: 62.53125em; }
-  #land-tone .h {
-    -webkit-transform: rotate(120deg);
-    -moz-transform: rotate(120deg);
-    -o-transform: rotate(120deg);
-    transform: rotate(120deg); }
-  #land-tone .hex-3 {
-    background: #888; }
-
 .hex {
   width: 7.1875em;
   height: 8.26563em;
@@ -108,7 +91,7 @@ header {
   height: 100%;
   overflow: hidden;
   visibility: visible;
-  background: whitesmoke;
+  background: black;
   -webkit-transform: rotate(-60deg);
   -moz-transform: rotate(-60deg);
   -o-transform: rotate(-60deg);
@@ -120,28 +103,31 @@ header {
   height: 100%;
   background-repeat: no-repeat;
   background-position: 50%;
-  -webkit-background-size: 150%;
-  -moz-background-size: 150%;
-  background-size: 150%;
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  background-size: 100%;
   -webkit-transform: rotate(-30deg);
   -moz-transform: rotate(-30deg);
   -o-transform: rotate(-30deg);
   transform: rotate(-30deg);
   margin-left: -7.1%; }
   .hex-image.sea {
-    background-image: url("../img/sea.jpg"); }
+    background-image: url("../img/sea2.png"); }
   .hex-image.brick {
-    background-image: url("../img/brick.jpg"); }
+    background-image: url("../img/brick2.png"); }
   .hex-image.ore {
-    background-image: url("../img/ore.jpg"); }
+    background-image: url("../img/ore.jpg");
+    -webkit-background-size: 150%;
+    -moz-background-size: 150%;
+    background-size: 150%; }
   .hex-image.wood {
-    background-image: url("../img/wood.jpg"); }
+    background-image: url("../img/wood2.png"); }
   .hex-image.wheat {
-    background-image: url("../img/wheat.jpg"); }
+    background-image: url("../img/wheat2.png"); }
   .hex-image.sheep {
-    background-image: url("../img/sheep.jpg"); }
+    background-image: url("../img/sheep2.png"); }
   .hex-image.desert {
-    background-image: url("../img/desert.jpg"); }
+    background-image: url("../img/desert2.png"); }
 
 .circle {
   border-radius: 50%; }
