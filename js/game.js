@@ -129,9 +129,8 @@
 
   window.stats = {
     calculate_yields: function() {
-      var bricks, ore, resource_hexes, sheep, wheat, wood;
-      resource_hexes = $('.hex:not(.sea, .desert)');
-      bricks = resource_hexes.filter('.brick');
+      var bricks, ore, sheep, wheat, wood;
+      bricks = _.filter('.brick');
       ore = resource_hexes.filter('.ore');
       wood = resource_hexes.filter('.wood');
       wheat = resource_hexes.filter('.wheat');
@@ -164,6 +163,9 @@
 
     Hex.prototype.set_type = function(new_type) {
       this.type = new_type;
+      if (this.type === 'desert') {
+        this.gain_robber();
+      }
       this.dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type);
       this.add_remove_probability();
       return this;
@@ -211,6 +213,10 @@
       this.dom_hex.find('.roll').text(this.roll);
       this.circularize_probability();
       return this;
+    };
+
+    Hex.prototype.gain_robber = function() {
+      return $('#robber-container').appendTo(this.dom_hex);
     };
 
     return Hex;

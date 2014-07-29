@@ -15,6 +15,7 @@
   min-height: 50em;
   width: 80%;
   height: 80%;
+  margin: 0 auto;
 }
 
 .hex-row {
@@ -127,19 +128,45 @@
 .circle {
   border-radius: 50%;
 }
-.hex:hover .probability {
-  opacity: 1;
-}
+
 .probability {
   text-align: center;
   border: 1px solid black;
-  opacity: 0.6;
   -webkit-transition: opacity 0.2s;
   -moz-transition: opacity 0.2s;
   -o-transition: opacity 0.2s;
   transition: opacity 0.2s;
   background: white;
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 37.3%;
+  top: 42.5%;
+}
+.probability .roll {
+  padding-top: 0.25em;
+}
+.probability .dots {
+  padding-bottom: 0.25em;
+}
+
+#robber-container {
+  position: absolute;
+  z-index: 10;
+  width: 2em;
+  height: 5em;
+  left: 20%;
+  top: -2%;
+}
+#robber-container img{
+  height: 100%;
+  position: absolute;
+}
+#robber {
+  z-index: 1;
+}
+#robber-shadow {
+  -webkit-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  -moz-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  -o-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
+  opacity: 0.8;
 }

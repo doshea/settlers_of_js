@@ -90,8 +90,7 @@ class Player
 
 window.stats = 
   calculate_yields: ->
-    resource_hexes = $('.hex:not(.sea, .desert)')
-    bricks = resource_hexes.filter('.brick')
+    bricks = _.filter('.brick')
     ore = resource_hexes.filter('.ore')
     wood = resource_hexes.filter('.wood')
     wheat = resource_hexes.filter('.wheat')
@@ -118,6 +117,8 @@ class Hex
     @
   set_type: (new_type) ->
     @type = new_type
+    if @type is 'desert'
+      @gain_robber()
     @dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type)
     @add_remove_probability()
     @
@@ -152,6 +153,8 @@ class Hex
     @dom_hex.find('.roll').text(@roll)
     @circularize_probability()
     @
+  gain_robber: ->
+    $('#robber-container').appendTo(@dom_hex)
 
 $(document).ready ->
   # begin with two players
