@@ -158,7 +158,7 @@
 
     Hex.prototype.build_hex = function(row) {
       var hex;
-      return hex = $(HEXAGON_NODE).data('hex-id', this.id).appendTo(row);
+      return hex = $(HEX_NODE).data('hex-id', this.id).appendTo(row);
     };
 
     Hex.prototype.clear = function() {
@@ -171,7 +171,7 @@
       if (this.type === 'desert') {
         this.gain_robber();
       }
-      this.dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type);
+      this.dom_hex.removeClass(HEX_CLASSES).addClass(new_type);
       this.add_remove_probability();
       return this;
     };
@@ -183,7 +183,7 @@
           this.dom_prob = null;
         }
       } else if (this.dom_hex.find('.probability').length === 0) {
-        this.dom_hex.find('.hex-image').append(PROBABILITY_NODE);
+        this.dom_hex.append(PROBABILITY_NODE);
         this.dom_prob = this.dom_hex.find('.probability');
       }
       return this;

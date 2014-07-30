@@ -114,7 +114,7 @@ class Hex
     @vertices = new Array(6)
 
   build_hex: (row)->
-    hex = $(HEXAGON_NODE)
+    hex = $(HEX_NODE)
       .data('hex-id', @id)
       .appendTo(row)
   clear: ->
@@ -124,7 +124,7 @@ class Hex
     @type = new_type
     if @type is 'desert'
       @gain_robber()
-    @dom_hex.find('.hex-image').removeClass(HEX_CLASSES).addClass(new_type)
+    @dom_hex.removeClass(HEX_CLASSES).addClass(new_type)
     @add_remove_probability()
     @
   add_remove_probability: ->
@@ -133,7 +133,7 @@ class Hex
         @dom_prob.remove()
         @dom_prob = null
     else if @dom_hex.find('.probability').length is 0
-      @dom_hex.find('.hex-image').append(PROBABILITY_NODE)
+      @dom_hex.append(PROBABILITY_NODE)
       @dom_prob = @dom_hex.find('.probability')
     @
   set_dots: (new_dots) ->
@@ -142,12 +142,10 @@ class Hex
     for i in [1..new_dots]
       dot_string = dot_string + '&bull;'
     @dom_hex.find('.dots').html(dot_string)
-    # @circularize_probability()
     @
   set_roll: (new_roll) ->
     @roll = new_roll
     @dom_hex.find('.roll').text(@roll)
-    # @circularize_probability()
     @
   gain_robber: ->
     $('#robber-container').appendTo(@dom_hex)

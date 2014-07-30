@@ -54,5 +54,5 @@ var RESOURCE_MAX = 19;
 
 var MAX_HAND_SIZE = 7;
 
-var HEXAGON_NODE = "<div class='hex'><div class='hex-1 h'><div class='hex-2 h'><div class='hex-3 h'><div class='hex-image h'></div></div></div></div></div></div>"
+var HEX_NODE = "<div class='hex'></div>";
 var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>"
