@@ -118,7 +118,7 @@ header {
   height: 100%;
   overflow: hidden;
   visibility: visible;
-  background: black;
+  // background: black;
   -webkit-transform: rotate(-60deg);
   -moz-transform: rotate(-60deg);
   -o-transform: rotate(-60deg);
@@ -140,29 +140,26 @@ header {
   margin-left: -7.1%;
 
   &.sea {
-    background-image: url('../img/sea2.png');
+    background-image: url('../img/sea4.png');
 
   }
   &.brick {
-    background-image: url('../img/brick2.png');
+    background-image: url('../img/brick4.png');
   }
   &.ore {
-    background-image: url('../img/ore.jpg');
-    -webkit-background-size: 150%;
-    -moz-background-size: 150%;
-    background-size: 150%;
+    background-image: url('../img/ore4.png');
   }
   &.wood {
-    background-image: url('../img/wood2.png');
+    background-image: url('../img/wood4.png');
   }
   &.wheat {
-    background-image: url('../img/wheat2.png');
+    background-image: url('../img/wheat4.png');
   }
   &.sheep {
-    background-image: url('../img/sheep2.png');
+    background-image: url('../img/sheep4.png');
   }
   &.desert {
-    background-image: url('../img/desert2.png');
+    background-image: url('../img/desert4.png');
   }
 }
 

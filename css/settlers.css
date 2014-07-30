@@ -91,7 +91,6 @@ header {
   height: 100%;
   overflow: hidden;
   visibility: visible;
-  background: black;
   -webkit-transform: rotate(-60deg);
   -moz-transform: rotate(-60deg);
   -o-transform: rotate(-60deg);
@@ -112,22 +111,19 @@ header {
   transform: rotate(-30deg);
   margin-left: -7.1%; }
   .hex-image.sea {
-    background-image: url("../img/sea2.png"); }
+    background-image: url("../img/sea4.png"); }
   .hex-image.brick {
-    background-image: url("../img/brick2.png"); }
+    background-image: url("../img/brick4.png"); }
   .hex-image.ore {
-    background-image: url("../img/ore.jpg");
-    -webkit-background-size: 150%;
-    -moz-background-size: 150%;
-    background-size: 150%; }
+    background-image: url("../img/ore4.png"); }
   .hex-image.wood {
-    background-image: url("../img/wood2.png"); }
+    background-image: url("../img/wood4.png"); }
   .hex-image.wheat {
-    background-image: url("../img/wheat2.png"); }
+    background-image: url("../img/wheat4.png"); }
   .hex-image.sheep {
-    background-image: url("../img/sheep2.png"); }
+    background-image: url("../img/sheep4.png"); }
   .hex-image.desert {
-    background-image: url("../img/desert2.png"); }
+    background-image: url("../img/desert4.png"); }
 
 .circle {
   border-radius: 50%; }
