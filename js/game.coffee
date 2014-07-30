@@ -82,9 +82,13 @@ class Player
         'background-color': "rgb(#{@rgb()})"
         'border-color': "rgb(#{@anti_rgb()})"
       .appendTo($('#players'))
-    @
   colored_el: (el, content) ->
     "<#{el} style='color: rgb(#{@rgb()});'>#{content}</#{el}>"
+  activate: ->
+    game.active_player = @
+    $('.player').removeClass('active')
+    @dom_box.addClass('active')
+    @
 
 window.stats = 
   calculate_yields: ->
@@ -112,6 +116,7 @@ class Hex
     @dom_prob
     @roads = new Array(6)
     @vertices = new Array(6)
+    @robbed = false;
 
   build_hex: (row)->
     hex = $(HEX_NODE)
@@ -148,7 +153,9 @@ class Hex
     @dom_hex.find('.roll').text(@roll)
     @
   gain_robber: ->
+    @robbed = true
     $('#robber-container').appendTo(@dom_hex)
+    @
 
 class Road
   constructor: (hex, position) ->

@@ -162,3 +162,53 @@ $col-offset: $offset-multiplier * $nhwo;
   opacity: 0.8;
 }
 
+$road-w: $nhwo/2;
+$road-h: $nhwo/15;
+
+$r1-4-rot: -60deg;
+$r1-4-hor: -17%;
+$r1-4-vert: 18.5%;
+$r2-5-left: 25%;
+$r2-5-vert: -8.5%;
+$r3-6-rot: -$r1-4-rot;
+$r3-6-hor: -$r1-4-hor;
+$r3-6-vert: -$r1-4-vert;
+
+.road {
+  position: absolute;
+  width: $road-w;
+  height: $road-h;
+  background: brown;
+
+  &.pos-1 {
+    transform: rotate($r1-4-rot);
+    left: $r1-4-hor;
+    top: $r1-4-vert;
+  }
+  &.pos-2 {
+    left: $r2-5-left;
+    top: $r2-5-vert;
+  }
+  &.pos-3 {
+    transform: rotate($r3-6-rot);
+    right: $r1-4-hor;
+    top: $r1-4-vert;
+  }
+  &.pos-4 {
+    transform: rotate($r1-4-rot);
+    right: $r1-4-hor;
+    bottom: $r1-4-vert;
+  }
+  &.pos-5 {
+    left: $r2-5-left;
+    bottom: $r2-5-vert;
+  }
+  &.pos-6 {
+    transform: rotate($r3-6-rot);
+    left: $r1-4-hor;
+    bottom: $r1-4-vert;
+  }
+  &:hover {
+    opacity: 0.3;
+  }
+}

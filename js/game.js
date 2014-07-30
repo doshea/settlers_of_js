@@ -106,15 +106,21 @@
 
     Player.prototype.build_box = function() {
       var box;
-      box = $('<div>').addClass('player').data('player-id', this.id).css({
+      return box = $('<div>').addClass('player').data('player-id', this.id).css({
         'background-color': "rgb(" + (this.rgb()) + ")",
         'border-color': "rgb(" + (this.anti_rgb()) + ")"
       }).appendTo($('#players'));
-      return this;
     };
 
     Player.prototype.colored_el = function(el, content) {
       return "<" + el + " style='color: rgb(" + (this.rgb()) + ");'>" + content + "</" + el + ">";
+    };
+
+    Player.prototype.activate = function() {
+      game.active_player = this;
+      $('.player').removeClass('active');
+      this.dom_box.addClass('active');
+      return this;
     };
 
     return Player;
@@ -154,6 +160,7 @@
       this.dom_prob;
       this.roads = new Array(6);
       this.vertices = new Array(6);
+      this.robbed = false;
     }
 
     Hex.prototype.build_hex = function(row) {
@@ -207,7 +214,9 @@
     };
 
     Hex.prototype.gain_robber = function() {
-      return $('#robber-container').appendTo(this.dom_hex);
+      this.robbed = true;
+      $('#robber-container').appendTo(this.dom_hex);
+      return this;
     };
 
     return Hex;

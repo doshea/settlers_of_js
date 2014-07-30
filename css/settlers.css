@@ -117,3 +117,33 @@ header {
   -o-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8, 1.4);
   transform: translate(1.33em, 3.49125em) rotate(150deg) scale(0.8, 1.4);
   opacity: 0.8; }
+
+.road {
+  position: absolute;
+  width: 4.15625em;
+  height: 0.55417em;
+  background: brown; }
+  .road.pos-1 {
+    transform: rotate(-60deg);
+    left: -17%;
+    top: 18.5%; }
+  .road.pos-2 {
+    left: 25%;
+    top: -8.5%; }
+  .road.pos-3 {
+    transform: rotate(60deg);
+    right: -17%;
+    top: 18.5%; }
+  .road.pos-4 {
+    transform: rotate(-60deg);
+    right: -17%;
+    bottom: 18.5%; }
+  .road.pos-5 {
+    left: 25%;
+    bottom: -8.5%; }
+  .road.pos-6 {
+    transform: rotate(60deg);
+    left: -17%;
+    bottom: 18.5%; }
+  .road:hover {
+    opacity: 0.3; }
