@@ -23,8 +23,17 @@ var HEX_POSITIONS =
     {'pos': 5, 'rel_row': 1, 'rel_col': -1}
   ];
 
+function offset_pos(i, offset){
+  return (i + offset)%6;
+}
 function opp_pos(i){
-  return (i+3)%6;
+  return offset_pos(i, 3)
+}
+function next_pos(i){
+  return offset_pos(i, 1)
+}
+function prev_pos(i){
+  return offset_pos(i, 5)
 }
 
 var MAX_ROW_LENGTH = _.max(_.pluck(HEX_ROWS, 'hexes'))

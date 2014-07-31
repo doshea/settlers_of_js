@@ -7,6 +7,7 @@
     dev_cards: [],
     hexes: [],
     roads: [],
+    buildings: [],
     rows: 0,
     die_roll: null,
     active_player: null,
@@ -18,7 +19,7 @@
       }
     },
     find_player: function(id) {
-      return this.players[parseInt(id) - 1];
+      return this.players[parseInt(id)];
     },
     add_row: function(row) {
       var col, new_hex, new_row, row_pos, _i, _ref, _results;
@@ -41,7 +42,13 @@
       return _results;
     },
     find_hex: function(id) {
-      return this.hexes[parseInt(id) - 1];
+      return this.hexes[parseInt(id)];
+    },
+    find_road: function(id) {
+      return this.roads[parseInt(id)];
+    },
+    find_buildings: function(id) {
+      return this.buildings[parseInt(id)];
     },
     find_hex_rc: function(row, col) {
       var matching;
@@ -88,6 +95,16 @@
       }
       return _results;
     },
+    populate_buildings: function() {
+      var road, _i, _len, _ref, _results;
+      _ref = game.roads;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        road = _ref[_i];
+        _results.push(road.end_with_buildings());
+      }
+      return _results;
+    },
     roll_dice: function() {
       var die, roll, roller, _i, _len, _ref;
       this.die_roll = 0;
@@ -120,9 +137,9 @@
 
   Player = (function() {
     function Player() {
-      game.players.push(this);
       this.id = game.players.length;
-      this.name = "Player " + this.id;
+      game.players.push(this);
+      this.name = "Player " + (this.id + 1);
       this.red = this.random_color();
       this.green = this.random_color();
       this.blue = this.random_color();
@@ -196,8 +213,8 @@
 
   Hex = (function() {
     function Hex(dom_row, row, col) {
-      game.hexes.push(this);
       this.id = game.hexes.length;
+      game.hexes.push(this);
       this.row = row;
       this.col = col;
       this.type = this.roll = this.dots = null;
@@ -205,7 +222,7 @@
       this.dom_prob = null;
       this.adj_hexes = new Array(6);
       this.roads = new Array(6);
-      this.vertices = new Array(6);
+      this.buildings = new Array(6);
       this.robbed = false;
     }
 
@@ -280,7 +297,9 @@
     };
 
     Hex.prototype.gain_building = function(pos) {
-      this.buildings[pos] = new Building(this, pos);
+      if (!this.buildings[pos]) {
+        this.buildings[pos] = new Building(this, pos);
+      }
       return this;
     };
 
@@ -328,7 +347,14 @@
     };
 
     Hex.prototype.surround_with_buildings = function() {
-      return true;
+      var hex, i, _i, _len, _ref, _results;
+      _ref = this.adj_hexes;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        hex = _ref[i];
+        _results.push(console.log(i));
+      }
+      return _results;
     };
 
     return Hex;
@@ -337,11 +363,13 @@
 
   Road = (function() {
     function Road(hex, pos) {
-      game.roads.push(this);
       this.id = game.roads.length;
-      this.player = null;
+      game.roads.push(this);
       this.hex = hex;
       this.pos = pos;
+      this.player = null;
+      this.buildings = new Array(6);
+      this.hexes = [hex, hex.adj_hexes[pos]];
       this.dom_road = this.build_road();
     }
 
@@ -350,21 +378,65 @@
       return new_road = $('<div>').addClass("road pos-" + this.pos).appendTo(this.hex.dom_hex);
     };
 
+    Road.prototype.end_with_buildings = function() {
+      this.hex.gain_building(this.pos);
+      return this.hex.gain_building((this.pos + 5) % 6);
+    };
+
     return Road;
 
   })();
 
   Building = (function() {
     function Building(hex, pos) {
+      this.id = game.buildings.length;
+      game.buildings.push(this);
       this.hex = hex;
-      this.ur_hex = null;
-      this.left_hex = null;
-      this.lr_hex = null;
+      this.pos = pos;
+      this.hexes = new Array(6);
+      this.roads = new Array(2);
+      this.associate_hexes();
+      this.associate_roads();
+      this.dom_building = this.build_building();
     }
+
+    Building.prototype.associate_hexes = function() {
+      this.hexes[opp_pos(this.pos)] = this.hex;
+      this.hexes[prev_pos(this.pos)] = this.hex.adj_hexes[this.pos];
+      return this.hexes[next_pos(this.pos)] = this.hex.adj_hexes[next_pos(this.pos)];
+    };
+
+    Building.prototype.associate_roads = function() {
+      var hex, i, _i, _len, _ref, _results;
+      _ref = this.hexes;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        hex = _ref[i];
+        if (hex) {
+          if (!this.roads[next_pos(i)]) {
+            this.roads[next_pos(i)] = hex.roads[opp_pos(i)];
+            if (this.roads[next_pos(i)]) {
+              _results.push(this.roads[next_pos(i)].buildings[opp_pos(next_pos(i))] = this);
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Building.prototype.existing_hexes = function() {
+      return _.compact(this.hexes);
+    };
 
     Building.prototype.build_building = function() {
       var new_building;
-      return new_building = $('<div>').addClass("building pos-" + pos).appendTo(this.hex.dom_hex);
+      return new_building = $('<div>').addClass("building circle pos-" + this.pos).appendTo(this.hex.dom_hex);
     };
 
     return Building;
@@ -382,12 +454,19 @@
     }
     game.populate_hexes();
     game.populate_roads();
-    return $('#players').on('click', '.player', function() {
+    game.populate_buildings();
+    $('#players').on('click', '.player', function() {
       var id;
       $('.active').removeClass('active');
       $(this).addClass('active');
       id = $(this).data('player-id');
       return game.active_player = game.find_player(id);
+    });
+    return $('input').on('change', function(e) {
+      var value;
+      value = $(this).val();
+      $('#board-pane').css('transform', "rotate(" + value + "deg)");
+      return $('.probability').css('transform', "rotate(" + (-value) + "deg)");
     });
   });
 

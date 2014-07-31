@@ -3,6 +3,7 @@ window.game =
   dev_cards: []  
   hexes: []
   roads: []
+  buildings: []
   rows: 0
   die_roll: null
   active_player: null
@@ -13,7 +14,7 @@ window.game =
       new_player.activate()
 
   find_player: (id) ->
-    @players[parseInt(id)-1]
+    @players[parseInt(id)]
 
   add_row: (row) ->
     @rows += 1
@@ -27,7 +28,11 @@ window.game =
         if (row_pos is 1) or (row_pos is row['hexes'])
           new_hex.set_type('sea')
   find_hex: (id) ->
-    @hexes[parseInt(id)-1]
+    @hexes[parseInt(id)]
+  find_road: (id) ->
+    @roads[parseInt(id)]
+  find_buildings: (id) ->
+    @buildings[parseInt(id)]
   find_hex_rc: (row, col) ->
     matching = _.filter @hexes, (hex) ->
       (hex.row == row) and (hex.col == col)
@@ -51,6 +56,9 @@ window.game =
   populate_roads: ->
     for hex in game.hexes
       hex.surround_with_roads()
+  populate_buildings: ->
+    for road in game.roads
+      road.end_with_buildings()
   roll_dice: ->
     @die_roll = 0
     for die in $('.die span')
@@ -76,9 +84,10 @@ window.log =
 
 class Player
   constructor: ->
-    game.players.push @
     @id = game.players.length
-    @name = "Player #{@id}"
+    game.players.push @
+    
+    @name = "Player #{@id+1}"
 
     @red = @random_color()
     @green = @random_color()
@@ -132,8 +141,9 @@ window.stats =
 
 class Hex
   constructor: (dom_row, row, col)->
-    game.hexes.push this
     @id = game.hexes.length
+    game.hexes.push this
+    
     @row = row
     @col = col
     @type = @roll = @dots = null
@@ -142,7 +152,7 @@ class Hex
     @dom_prob = null
     @adj_hexes = new Array(6)
     @roads = new Array(6)
-    @vertices = new Array(6)
+    @buildings = new Array(6)
     @robbed = false;
 
   build_hex: (row)->
@@ -192,7 +202,8 @@ class Hex
         neighbor.roads[opp_pos(pos)] = new_road
     @
   gain_building: (pos) ->
-    @buildings[pos] = new Building(@, pos)
+    unless @buildings[pos]
+      @buildings[pos] = new Building(@, pos)
     @
   associate_hexes: ->
     for position in HEX_POSITIONS
@@ -209,17 +220,22 @@ class Hex
           if (hex.type != 'sea') || (@type != 'sea')
             @gain_road(i)
   surround_with_buildings: ->
-    true
+    for hex, i in @adj_hexes
+      console.log(i)
 
 
 
 class Road
   constructor: (hex, pos) ->
-    game.roads.push @
     @id = game.roads.length
-    @player = null
+    game.roads.push @
     @hex = hex
     @pos = pos
+    
+    @player = null
+    @buildings = new Array(6)
+
+    @hexes = [hex, hex.adj_hexes[pos]]
 
     @dom_road = @build_road()
 
@@ -227,16 +243,38 @@ class Road
     new_road = $('<div>')
       .addClass("road pos-#{@pos}")
       .appendTo(@hex.dom_hex)
+  end_with_buildings: ->
+    @hex.gain_building(@pos)
+    @hex.gain_building((@pos+5)%6)
+
 
 class Building
   constructor: (hex, pos) ->
+    @id = game.buildings.length
+    game.buildings.push @
     @hex = hex
-    @ur_hex = null
-    @left_hex = null
-    @lr_hex = null
+    @pos = pos
+    @hexes = new Array(6)
+    @roads = new Array(2)
+    @associate_hexes()
+    @associate_roads()
+    @dom_building = @build_building()
+  associate_hexes: ->
+    @hexes[opp_pos(@pos)] = @hex
+    @hexes[prev_pos(@pos)] = @hex.adj_hexes[@pos]
+    @hexes[next_pos(@pos)] = @hex.adj_hexes[next_pos(@pos)]
+  associate_roads: ->
+    for hex, i in @hexes
+      if hex
+        unless @roads[next_pos(i)]
+          @roads[next_pos(i)] = hex.roads[opp_pos(i)]
+          if @roads[next_pos(i)]
+            @roads[next_pos(i)].buildings[opp_pos(next_pos(i))] = @
+  existing_hexes: ->
+    _.compact(@hexes)
   build_building: ->
     new_building = $('<div>')
-      .addClass("building pos-#{pos}")
+      .addClass("building circle pos-#{@pos}")
       .appendTo(@hex.dom_hex)
 
 $(document).ready ->
@@ -245,11 +283,15 @@ $(document).ready ->
   game.add_row(row) for row in HEX_ROWS
   game.populate_hexes()
   game.populate_roads() #REMOVE
-  
-
+  game.populate_buildings() #REMOVE
 
   $('#players').on 'click', '.player', ->
     $('.active').removeClass('active')
     $(this).addClass('active')
     id = $(this).data('player-id')
     game.active_player = game.find_player(id)
+
+  $('input').on 'change', (e) ->
+    value = $(this).val()
+    $('#board-pane').css('transform', "rotate(#{value}deg)")
+    $('.probability').css('transform', "rotate(#{-value}deg)")
