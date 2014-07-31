@@ -11,6 +11,7 @@
     <script type="text/javascript" src="./js/underscore.min.js"></script>
 
     <link href="./css/settlers.css" rel="stylesheet" type="text/css">
+    <link href="./css/empty.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="./js/constants.js"></script>
     <script type="text/javascript" src="./js/game.js"></script>
 
@@ -51,7 +52,15 @@
         <hr>
       </ul>
     </div>
-    <br>
-
+    
+    <div id='dice'>
+      <div class='die'>
+        <span>&#x2680;</span>
+      </div>
+      <div class='die'>
+        <span>&#x2685;</span>
+      </div>
+      <button onclick='game.roll_dice()'>Roll Dice</button>
+    </div>
   </body>
 </html>

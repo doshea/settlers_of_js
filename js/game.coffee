@@ -3,32 +3,41 @@ window.game =
   dev_cards: []  
   hexes: []
   roads: []
+  rows: 0
+  die_roll: null
   active_player: null
 
   add_player: ->
-    new Player
+    new_player = new Player
+    unless @active_player
+      new_player.activate()
 
   find_player: (id) ->
     @players[parseInt(id)-1]
 
   add_row: (row) ->
+    @rows += 1
     new_row = $('<div>')
       .addClass('hex-row')
       .appendTo('#board')
-    for i in [1..row['hexes']]
-      new_hex = new Hex(new_row)
+    for row_pos in [1..row['hexes']]
+      col = MAX_ROW_LENGTH - row['hexes'] + 1 + (2 * (row_pos-1))
+      new_hex = new Hex(new_row, @rows, col)
       unless row['landlocked']
-        if (i is 1) or (i is row['hexes'])
+        if (row_pos is 1) or (row_pos is row['hexes'])
           new_hex.set_type('sea')
-
   find_hex: (id) ->
     @hexes[parseInt(id)-1]
-
+  find_hex_rc: (row, col) ->
+    matching = _.filter @hexes, (hex) ->
+      (hex.row == row) and (hex.col == col)
+    matching[0]
   populate_hexes: ->
     shuffled_hexes = _.shuffle(HEX_DECK)
     for hex in game.hexes
       unless hex.type is 'sea'
         hex.set_type(shuffled_hexes.pop())
+      hex.associate_hexes()
     @populate_probabilities()
     log.msg('Populated hexes.')
   populate_probabilities: ->
@@ -39,6 +48,18 @@ window.game =
         hex.set_roll(drawn_prob['roll'])
         hex.set_dots(drawn_prob['dots'])
     stats.calculate_yields()
+  populate_roads: ->
+    for hex in game.hexes
+      for i in [1..6]
+        hex.gain_road(i)
+  roll_dice: ->
+    @die_roll = 0
+    for die in $('.die span')
+      roll = Math.floor(Math.random()*5)
+      @die_roll += (roll+1)
+      $(die).html("&#x268#{roll};")
+    roller = game.active_player
+    log.msg("#{roller.name_span()} rolled <b>#{@die_roll}</b>.")
 
 window.bank =
   sheep: RESOURCE_MAX
@@ -63,32 +84,36 @@ class Player
     @red = @random_color()
     @green = @random_color()
     @blue = @random_color()
+    @make_css_rules()
 
     @dom_box = @build_box()
     @victory_points = 0
-    log.msg("#{@colored_el('span', @name)} has joined the game.")
+    log.msg("#{@name_span()} has joined the game.")
 
   random_color: ->
     Math.floor(Math.random()*256)
   rgb: ->
-    "#{@red},#{@green},#{@blue}"
+    "rgb(#{@red},#{@green},#{@blue})"
   anti_rgb: ->
-    "#{256-@red},#{256-@green},#{256-@blue}"
+    "rgb(#{256-@red},#{256-@green},#{256-@blue})"
+  make_css_rules: ->
+    # Thanks to http://davidwalsh.name/add-rules-stylesheets
+    DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-bg { background: #{@rgb()} }", 0)
+    DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-color { color: #{@rgb()} }", 0)
+    DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-anti-border { border: 2px solid #{@anti_rgb()} }", 0)
   build_box: ->
     box = $('<div>')
       .addClass('player')
       .data('player-id', @id)
-      .css
-        'background-color': "rgb(#{@rgb()})"
-        'border-color': "rgb(#{@anti_rgb()})"
+      .addClass("player-#{@id}-bg player-#{@id}-anti-border")
       .appendTo($('#players'))
-  colored_el: (el, content) ->
-    "<#{el} style='color: rgb(#{@rgb()});'>#{content}</#{el}>"
   activate: ->
     game.active_player = @
     $('.player').removeClass('active')
     @dom_box.addClass('active')
     @
+  name_span: ->
+    "<span class='player-#{@id}-color'>#{@name}</span>"
 
 window.stats = 
   calculate_yields: ->
@@ -107,16 +132,20 @@ window.stats =
       row.appendTo($('#resource-yields tbody'))
 
 class Hex
-  constructor: (row)->
+  constructor: (dom_row, row, col)->
     game.hexes.push this
     @id = game.hexes.length
+    @row = row
+    @col = col
     @type = @roll = @dots = null
 
-    @dom_hex = @build_hex(row)
-    @dom_prob
+    @dom_hex = @build_hex(dom_row)
+    @dom_prob = null
     @roads = new Array(6)
     @vertices = new Array(6)
     @robbed = false;
+
+    @adj_hex_1 = @adj_hex_2 = @adj_hex_3 = @adj_hex_4 = @adj_hex_5 = @adj_hex_6 = null
 
   build_hex: (row)->
     hex = $(HEX_NODE)
@@ -156,25 +185,63 @@ class Hex
     @robbed = true
     $('#robber-container').appendTo(@dom_hex)
     @
+  gain_road: (pos) ->
+    @roads[pos-1] = new Road(@, pos)
+    @
+  associate_hexes: ->
+    unless @adj_hex_1
+      @adj_hex_1 = game.find_hex_rc(@row-1, @col-1)
+      if @adj_hex_1
+        @adj_hex_1.adj_hex_4 = @
+    unless @adj_hex_2
+      @adj_hex_2 = game.find_hex_rc(@row-2, @col)
+      if @adj_hex_2
+        @adj_hex_2.adj_hex_5 = @
+    unless @adj_hex_3
+      @adj_hex_3 = game.find_hex_rc(@row-1, @col+1)
+      if @adj_hex_3
+        @adj_hex_3.adj_hex_6 = @
+    unless @adj_hex_4
+      @adj_hex_4 = game.find_hex_rc(@row+1, @col+1)
+      if @adj_hex_4
+        @adj_hex_4.adj_hex_1 = @
+    unless @adj_hex_5
+      @adj_hex_5 = game.find_hex_rc(@row+2, @col)
+      if @adj_hex_5
+        @adj_hex_5.adj_hex_2 = @
+    unless @adj_hex_6
+      @adj_hex_6 = game.find_hex_rc(@row+1, @col-1)
+      if @adj_hex_6
+        @adj_hex_6.adj_hex_3 = @
+
 
 class Road
-  constructor: (hex, position) ->
+  constructor: (hex, pos) ->
     game.roads.push @
-    @player
-    @dom_road
-    if position < 3
-      @above_hex = hex
-    else
-      @below_hex = hex
+    @id = game.roads.length
+    @player = null
+    @hex = hex
+    @pos = pos
+
+    @dom_road = @build_road()
+
   build_road: ->
+    new_road = $("<div>")
+      .addClass("road pos-#{@pos}")
+      .appendTo(@hex.dom_hex)
 
-
+class Building
+  constructor: ->
+    @ur_hex = null
+    @left_hex = null
+    @lr_hex = null
 
 $(document).ready ->
   # begin with two players
   game.add_player() for player in [1..STARTING_PLAYERS]
   game.add_row(row) for row in HEX_ROWS
   game.populate_hexes()
+  game.populate_roads() #REMOVE
   
 
 

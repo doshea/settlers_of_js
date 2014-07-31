@@ -13,6 +13,9 @@ var HEX_ROWS = [
                 {'hexes': 2, 'landlocked': false},
                 {'hexes': 1, 'landlocked': false}
               ]
+var MAX_ROW_LENGTH = _.max(_.pluck(HEX_ROWS, 'hexes'))
+var COLUMNS = (MAX_ROW_LENGTH * 2) - 1
+
 var HEX_PROBABILITIES = [
                 {roll: 2, dots: 1, count: 1},
                 {roll: 3, dots: 2, count: 2},
@@ -54,5 +57,8 @@ var RESOURCE_MAX = 19;
 
 var MAX_HAND_SIZE = 7;
 
-var HEX_NODE = "<div class='hex'><div class='road pos-1'></div><div class='road pos-2'></div><div class='road pos-3'></div><div class='road pos-4'></div><div class='road pos-5'></div><div class='road pos-6'></div></div>";
+var HEX_NODE = "<div class='hex'><div class='building circle pos-1'></div><div class='building circle pos-2'></div><div class='building circle pos-3'></div><div class='building circle pos-4'></div><div class='building circle pos-5'></div><div class='building circle pos-6'></div></div>";
 var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>"
+
+var SHEETS = document.styleSheets
+var DYNAMIC_STYLESHEET = SHEETS[SHEETS.length-1]

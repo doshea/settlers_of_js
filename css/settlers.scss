@@ -22,6 +22,10 @@ header {
   }
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 $hwo: 133px;
 $hho: 117px;
 $hscale: 1;
@@ -34,7 +38,7 @@ $col-offset: $offset-multiplier * $nhwo;
 /* BOARD */
 #board-pane {
   text-align: center;
-  padding: 2em 0;
+  padding: 1em 0;
 }
 #board {
   position: relative;
@@ -166,10 +170,10 @@ $road-w: $nhwo/2;
 $road-h: $nhwo/15;
 
 $r1-4-rot: -60deg;
-$r1-4-hor: -17%;
-$r1-4-vert: 18.5%;
-$r2-5-left: 25%;
-$r2-5-vert: -8.5%;
+$r1-4-hor: -18%;
+$r1-4-vert: 17.8%;
+$r2-5-left: 24.3%;
+$r2-5-vert: -10%;
 $r3-6-rot: -$r1-4-rot;
 $r3-6-hor: -$r1-4-hor;
 $r3-6-vert: -$r1-4-vert;
@@ -178,7 +182,8 @@ $r3-6-vert: -$r1-4-vert;
   position: absolute;
   width: $road-w;
   height: $road-h;
-  background: brown;
+  background: whitesmoke;
+  border: 1px solid #ccc;
 
   &.pos-1 {
     transform: rotate($r1-4-rot);
@@ -208,7 +213,68 @@ $r3-6-vert: -$r1-4-vert;
     left: $r1-4-hor;
     bottom: $r1-4-vert;
   }
+}
+
+$b1-2-4-5-hor: $r2-5-left - 8.4%;
+$b1-2-4-5-vert: $r2-5-vert - 1.5%;
+$b3-6-hor: -11.5%;
+$b3-6-vert: 43.5%;
+
+.building {
+  background: whitesmoke;
+  border: 1px solid #ccc;
+  width: $road-h*1.5;
+  height: $road-h*1.5;
+  position: absolute;
+  z-index: 2;
+
+  &.pos-1 {
+    left: $b1-2-4-5-hor;
+    top: $b1-2-4-5-vert;
+  }
+  &.pos-2 {
+    right: $b1-2-4-5-hor;
+    top: $b1-2-4-5-vert;
+  }
+  &.pos-3 {
+    right: $b3-6-hor;
+    top: $b3-6-vert;
+  }
+  &.pos-4 {
+    right: $b1-2-4-5-hor;
+    bottom: $b1-2-4-5-vert;
+  }
+  &.pos-5 {
+    left: $b1-2-4-5-hor;
+    bottom: $b1-2-4-5-vert;
+  }
+  &.pos-6 {
+    left: $b3-6-hor;
+    top: $b3-6-vert;
+  }
+}
+
+.road, .building {
   &:hover {
-    opacity: 0.3;
+    background: #333;
+  }
+}
+
+
+#dice {
+  position: fixed;
+  top: 0;
+  right: 0;
+  button {
+    width: 50%;
+    font-weight: bold;
+    font-size: 1em;
+  }
+}
+.die {
+  display: inline-block;
+  span {
+    font-size: 15em;
+    line-height: 1em;
   }
 }
