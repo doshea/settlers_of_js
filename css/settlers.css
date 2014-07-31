@@ -127,25 +127,25 @@ header {
   height: 0.55417em;
   background: whitesmoke;
   border: 1px solid #ccc; }
-  .road.pos-1 {
+  .road.pos-0 {
     transform: rotate(-60deg);
     left: -18%;
     top: 17.8%; }
-  .road.pos-2 {
+  .road.pos-1 {
     left: 24.3%;
     top: -10%; }
-  .road.pos-3 {
+  .road.pos-2 {
     transform: rotate(60deg);
     right: -18%;
     top: 17.8%; }
-  .road.pos-4 {
+  .road.pos-3 {
     transform: rotate(-60deg);
     right: -18%;
     bottom: 17.8%; }
-  .road.pos-5 {
+  .road.pos-4 {
     left: 24.3%;
     bottom: -10%; }
-  .road.pos-6 {
+  .road.pos-5 {
     transform: rotate(60deg);
     left: -18%;
     bottom: 17.8%; }
@@ -157,22 +157,22 @@ header {
   height: 0.83125em;
   position: absolute;
   z-index: 2; }
-  .building.pos-1 {
+  .building.pos-0 {
     left: 15.9%;
+    top: -11.5%; }
+  .building.pos-1 {
+    right: 15.9%;
     top: -11.5%; }
   .building.pos-2 {
-    right: 15.9%;
-    top: -11.5%; }
-  .building.pos-3 {
     right: -11.5%;
     top: 43.5%; }
-  .building.pos-4 {
+  .building.pos-3 {
     right: 15.9%;
     bottom: -11.5%; }
-  .building.pos-5 {
+  .building.pos-4 {
     left: 15.9%;
     bottom: -11.5%; }
-  .building.pos-6 {
+  .building.pos-5 {
     left: -11.5%;
     top: 43.5%; }
 

@@ -65,12 +65,12 @@
       return log.msg('Populated hexes.');
     },
     populate_probabilities: function() {
-      var drawn_prob, hex, shuffled_probs, _i, _len, _ref;
+      var drawn_prob, hex, shuffled_probs, _i, _len, _ref, _ref1;
       shuffled_probs = _.shuffle(PROBABILITY_DECK);
       _ref = game.hexes;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         hex = _ref[_i];
-        if (!_.contains(['sea', 'desert'], hex.type)) {
+        if ((_ref1 = hex.type) !== 'sea' && _ref1 !== 'desert') {
           drawn_prob = shuffled_probs.pop();
           hex.set_roll(drawn_prob['roll']);
           hex.set_dots(drawn_prob['dots']);
@@ -79,19 +79,12 @@
       return stats.calculate_yields();
     },
     populate_roads: function() {
-      var hex, i, _i, _len, _ref, _results;
+      var hex, _i, _len, _ref, _results;
       _ref = game.hexes;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         hex = _ref[_i];
-        _results.push((function() {
-          var _j, _results1;
-          _results1 = [];
-          for (i = _j = 1; _j <= 6; i = ++_j) {
-            _results1.push(hex.gain_road(i));
-          }
-          return _results1;
-        })());
+        _results.push(hex.surround_with_roads());
       }
       return _results;
     },
@@ -210,10 +203,10 @@
       this.type = this.roll = this.dots = null;
       this.dom_hex = this.build_hex(dom_row);
       this.dom_prob = null;
+      this.adj_hexes = new Array(6);
       this.roads = new Array(6);
       this.vertices = new Array(6);
       this.robbed = false;
-      this.adj_hex_1 = this.adj_hex_2 = this.adj_hex_3 = this.adj_hex_4 = this.adj_hex_5 = this.adj_hex_6 = null;
     }
 
     Hex.prototype.build_hex = function(row) {
@@ -237,7 +230,8 @@
     };
 
     Hex.prototype.add_remove_probability = function() {
-      if (_.contains(['sea', 'desert'], this.type)) {
+      var _ref;
+      if ((_ref = this.type) === 'sea' || _ref === 'desert') {
         if (this.dom_prob) {
           this.dom_prob.remove();
           this.dom_prob = null;
@@ -273,47 +267,68 @@
     };
 
     Hex.prototype.gain_road = function(pos) {
-      this.roads[pos - 1] = new Road(this, pos);
+      var neighbor, new_road;
+      if (!this.roads[pos]) {
+        new_road = new Road(this, pos);
+        this.roads[pos] = new_road;
+        neighbor = this.adj_hexes[pos];
+        if (neighbor) {
+          neighbor.roads[opp_pos(pos)] = new_road;
+        }
+      }
+      return this;
+    };
+
+    Hex.prototype.gain_building = function(pos) {
+      this.buildings[pos] = new Building(this, pos);
       return this;
     };
 
     Hex.prototype.associate_hexes = function() {
-      if (!this.adj_hex_1) {
-        this.adj_hex_1 = game.find_hex_rc(this.row - 1, this.col - 1);
-        if (this.adj_hex_1) {
-          this.adj_hex_1.adj_hex_4 = this;
+      var pos, position, rel_col, rel_row, _i, _len, _ref, _results;
+      _results = [];
+      for (_i = 0, _len = HEX_POSITIONS.length; _i < _len; _i++) {
+        position = HEX_POSITIONS[_i];
+        _ref = [position['pos'], position['rel_row'], position['rel_col']], pos = _ref[0], rel_row = _ref[1], rel_col = _ref[2];
+        if (!this.adj_hexes[pos]) {
+          this.adj_hexes[pos] = game.find_hex_rc(this.row + rel_row, this.col + rel_col);
+          if (this.adj_hexes[pos]) {
+            _results.push(this.adj_hexes[pos].adj_hexes[opp_pos(pos)] = this);
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
         }
       }
-      if (!this.adj_hex_2) {
-        this.adj_hex_2 = game.find_hex_rc(this.row - 2, this.col);
-        if (this.adj_hex_2) {
-          this.adj_hex_2.adj_hex_5 = this;
+      return _results;
+    };
+
+    Hex.prototype.surround_with_roads = function() {
+      var hex, i, _i, _len, _ref, _results;
+      _ref = this.adj_hexes;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        hex = _ref[i];
+        if (hex) {
+          if (!this.roads[i]) {
+            if ((hex.type !== 'sea') || (this.type !== 'sea')) {
+              _results.push(this.gain_road(i));
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
         }
       }
-      if (!this.adj_hex_3) {
-        this.adj_hex_3 = game.find_hex_rc(this.row - 1, this.col + 1);
-        if (this.adj_hex_3) {
-          this.adj_hex_3.adj_hex_6 = this;
-        }
-      }
-      if (!this.adj_hex_4) {
-        this.adj_hex_4 = game.find_hex_rc(this.row + 1, this.col + 1);
-        if (this.adj_hex_4) {
-          this.adj_hex_4.adj_hex_1 = this;
-        }
-      }
-      if (!this.adj_hex_5) {
-        this.adj_hex_5 = game.find_hex_rc(this.row + 2, this.col);
-        if (this.adj_hex_5) {
-          this.adj_hex_5.adj_hex_2 = this;
-        }
-      }
-      if (!this.adj_hex_6) {
-        this.adj_hex_6 = game.find_hex_rc(this.row + 1, this.col - 1);
-        if (this.adj_hex_6) {
-          return this.adj_hex_6.adj_hex_3 = this;
-        }
-      }
+      return _results;
+    };
+
+    Hex.prototype.surround_with_buildings = function() {
+      return true;
     };
 
     return Hex;
@@ -332,7 +347,7 @@
 
     Road.prototype.build_road = function() {
       var new_road;
-      return new_road = $("<div>").addClass("road pos-" + this.pos).appendTo(this.hex.dom_hex);
+      return new_road = $('<div>').addClass("road pos-" + this.pos).appendTo(this.hex.dom_hex);
     };
 
     return Road;
@@ -340,11 +355,17 @@
   })();
 
   Building = (function() {
-    function Building() {
+    function Building(hex, pos) {
+      this.hex = hex;
       this.ur_hex = null;
       this.left_hex = null;
       this.lr_hex = null;
     }
+
+    Building.prototype.build_building = function() {
+      var new_building;
+      return new_building = $('<div>').addClass("building pos-" + pos).appendTo(this.hex.dom_hex);
+    };
 
     return Building;
 

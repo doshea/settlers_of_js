@@ -13,6 +13,20 @@ var HEX_ROWS = [
                 {'hexes': 2, 'landlocked': false},
                 {'hexes': 1, 'landlocked': false}
               ]
+var HEX_POSITIONS = 
+  [
+    {'pos': 0, 'rel_row': -1, 'rel_col': -1},
+    {'pos': 1, 'rel_row': -2, 'rel_col': 0},
+    {'pos': 2, 'rel_row': -1, 'rel_col': +1},
+    {'pos': 3, 'rel_row': 1, 'rel_col': +1},
+    {'pos': 4, 'rel_row': 2, 'rel_col': 0},
+    {'pos': 5, 'rel_row': 1, 'rel_col': -1}
+  ];
+
+function opp_pos(i){
+  return (i+3)%6;
+}
+
 var MAX_ROW_LENGTH = _.max(_.pluck(HEX_ROWS, 'hexes'))
 var COLUMNS = (MAX_ROW_LENGTH * 2) - 1
 
@@ -57,7 +71,7 @@ var RESOURCE_MAX = 19;
 
 var MAX_HAND_SIZE = 7;
 
-var HEX_NODE = "<div class='hex'><div class='building circle pos-1'></div><div class='building circle pos-2'></div><div class='building circle pos-3'></div><div class='building circle pos-4'></div><div class='building circle pos-5'></div><div class='building circle pos-6'></div></div>";
+var HEX_NODE = "<div class='hex'></div>";
 var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>"
 
 var SHEETS = document.styleSheets

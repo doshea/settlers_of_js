@@ -43,15 +43,14 @@ window.game =
   populate_probabilities: ->
     shuffled_probs = _.shuffle(PROBABILITY_DECK)
     for hex in game.hexes
-      unless _.contains(['sea', 'desert'], hex.type)
+      unless hex.type in ['sea', 'desert']
         drawn_prob = shuffled_probs.pop()
         hex.set_roll(drawn_prob['roll'])
         hex.set_dots(drawn_prob['dots'])
     stats.calculate_yields()
   populate_roads: ->
     for hex in game.hexes
-      for i in [1..6]
-        hex.gain_road(i)
+      hex.surround_with_roads()
   roll_dice: ->
     @die_roll = 0
     for die in $('.die span')
@@ -141,11 +140,10 @@ class Hex
 
     @dom_hex = @build_hex(dom_row)
     @dom_prob = null
+    @adj_hexes = new Array(6)
     @roads = new Array(6)
     @vertices = new Array(6)
     @robbed = false;
-
-    @adj_hex_1 = @adj_hex_2 = @adj_hex_3 = @adj_hex_4 = @adj_hex_5 = @adj_hex_6 = null
 
   build_hex: (row)->
     hex = $(HEX_NODE)
@@ -162,7 +160,7 @@ class Hex
     @add_remove_probability()
     @
   add_remove_probability: ->
-    if _.contains(['sea','desert'], @type)
+    if @type in ['sea','desert']
       if @dom_prob
         @dom_prob.remove()
         @dom_prob = null
@@ -186,33 +184,33 @@ class Hex
     $('#robber-container').appendTo(@dom_hex)
     @
   gain_road: (pos) ->
-    @roads[pos-1] = new Road(@, pos)
+    unless @roads[pos]
+      new_road = new Road(@, pos)
+      @roads[pos] = new_road
+      neighbor = @adj_hexes[pos]
+      if neighbor
+        neighbor.roads[opp_pos(pos)] = new_road
+    @
+  gain_building: (pos) ->
+    @buildings[pos] = new Building(@, pos)
     @
   associate_hexes: ->
-    unless @adj_hex_1
-      @adj_hex_1 = game.find_hex_rc(@row-1, @col-1)
-      if @adj_hex_1
-        @adj_hex_1.adj_hex_4 = @
-    unless @adj_hex_2
-      @adj_hex_2 = game.find_hex_rc(@row-2, @col)
-      if @adj_hex_2
-        @adj_hex_2.adj_hex_5 = @
-    unless @adj_hex_3
-      @adj_hex_3 = game.find_hex_rc(@row-1, @col+1)
-      if @adj_hex_3
-        @adj_hex_3.adj_hex_6 = @
-    unless @adj_hex_4
-      @adj_hex_4 = game.find_hex_rc(@row+1, @col+1)
-      if @adj_hex_4
-        @adj_hex_4.adj_hex_1 = @
-    unless @adj_hex_5
-      @adj_hex_5 = game.find_hex_rc(@row+2, @col)
-      if @adj_hex_5
-        @adj_hex_5.adj_hex_2 = @
-    unless @adj_hex_6
-      @adj_hex_6 = game.find_hex_rc(@row+1, @col-1)
-      if @adj_hex_6
-        @adj_hex_6.adj_hex_3 = @
+    for position in HEX_POSITIONS
+      [pos, rel_row, rel_col] = [position['pos'], position['rel_row'], position['rel_col']]
+      unless @adj_hexes[pos]
+        @adj_hexes[pos] = game.find_hex_rc(@row + rel_row , @col + rel_col)
+        if @adj_hexes[pos]
+          @adj_hexes[pos].adj_hexes[opp_pos(pos)] = @
+  surround_with_roads: ->
+    #only run after hexes are associated
+    for hex, i in @adj_hexes
+      if hex
+        unless @roads[i]
+          if (hex.type != 'sea') || (@type != 'sea')
+            @gain_road(i)
+  surround_with_buildings: ->
+    true
+
 
 
 class Road
@@ -226,15 +224,20 @@ class Road
     @dom_road = @build_road()
 
   build_road: ->
-    new_road = $("<div>")
+    new_road = $('<div>')
       .addClass("road pos-#{@pos}")
       .appendTo(@hex.dom_hex)
 
 class Building
-  constructor: ->
+  constructor: (hex, pos) ->
+    @hex = hex
     @ur_hex = null
     @left_hex = null
     @lr_hex = null
+  build_building: ->
+    new_building = $('<div>')
+      .addClass("building pos-#{pos}")
+      .appendTo(@hex.dom_hex)
 
 $(document).ready ->
   # begin with two players

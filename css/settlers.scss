@@ -185,30 +185,30 @@ $r3-6-vert: -$r1-4-vert;
   background: whitesmoke;
   border: 1px solid #ccc;
 
-  &.pos-1 {
+  &.pos-0 {
     transform: rotate($r1-4-rot);
     left: $r1-4-hor;
     top: $r1-4-vert;
   }
-  &.pos-2 {
+  &.pos-1 {
     left: $r2-5-left;
     top: $r2-5-vert;
   }
-  &.pos-3 {
+  &.pos-2 {
     transform: rotate($r3-6-rot);
     right: $r1-4-hor;
     top: $r1-4-vert;
   }
-  &.pos-4 {
+  &.pos-3 {
     transform: rotate($r1-4-rot);
     right: $r1-4-hor;
     bottom: $r1-4-vert;
   }
-  &.pos-5 {
+  &.pos-4 {
     left: $r2-5-left;
     bottom: $r2-5-vert;
   }
-  &.pos-6 {
+  &.pos-5 {
     transform: rotate($r3-6-rot);
     left: $r1-4-hor;
     bottom: $r1-4-vert;
@@ -228,27 +228,27 @@ $b3-6-vert: 43.5%;
   position: absolute;
   z-index: 2;
 
-  &.pos-1 {
+  &.pos-0 {
     left: $b1-2-4-5-hor;
+    top: $b1-2-4-5-vert;
+  }
+  &.pos-1 {
+    right: $b1-2-4-5-hor;
     top: $b1-2-4-5-vert;
   }
   &.pos-2 {
-    right: $b1-2-4-5-hor;
-    top: $b1-2-4-5-vert;
-  }
-  &.pos-3 {
     right: $b3-6-hor;
     top: $b3-6-vert;
   }
-  &.pos-4 {
+  &.pos-3 {
     right: $b1-2-4-5-hor;
     bottom: $b1-2-4-5-vert;
   }
-  &.pos-5 {
+  &.pos-4 {
     left: $b1-2-4-5-hor;
     bottom: $b1-2-4-5-vert;
   }
-  &.pos-6 {
+  &.pos-5 {
     left: $b3-6-hor;
     top: $b3-6-vert;
   }
