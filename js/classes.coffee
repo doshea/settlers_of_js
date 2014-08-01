@@ -57,8 +57,9 @@ window.game =
     for hex in game.hexes
       hex.surround_with_roads()
   populate_buildings: ->
-    for road in game.roads
-      road.end_with_buildings()
+    for hex in game.hexes
+      for i in [0..5]
+        hex.gain_new_building(i)
   roll_dice: ->
     @die_roll = 0
     for die in $('.die span')
@@ -67,20 +68,6 @@ window.game =
       $(die).html("&#x268#{roll};")
     roller = game.active_player
     log.msg("#{roller.name_span()} rolled <b>#{@die_roll}</b>.")
-
-window.bank =
-  sheep: RESOURCE_MAX
-  wheat: RESOURCE_MAX
-  brick: RESOURCE_MAX
-  wood: RESOURCE_MAX
-  ore: RESOURCE_MAX
-
-window.log = 
-  msg: (content) ->
-    new_msg = $('<li>')
-      .addClass('log-msg')
-      .html(content)
-      .appendTo($('#log-msgs'))
 
 class Player
   constructor: ->
@@ -94,7 +81,7 @@ class Player
     @blue = @random_color()
     @make_css_rules()
 
-    @dom_box = @build_box()
+    @dom_box = @build()
     @victory_points = 0
     log.msg("#{@name_span()} has joined the game.")
 
@@ -109,7 +96,7 @@ class Player
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-bg { background: #{@rgb()} }", 0)
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-color { color: #{@rgb()} }", 0)
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-anti-border { border: 2px solid #{@anti_rgb()} }", 0)
-  build_box: ->
+  build: ->
     box = $('<div>')
       .addClass('player')
       .data('player-id', @id)
@@ -123,22 +110,6 @@ class Player
   name_span: ->
     "<span class='player-#{@id}-color'>#{@name}</span>"
 
-window.stats = 
-  calculate_yields: ->
-    $('#resource-yields tbody').empty()
-    hexes_by_resource = _.map RESOURCES, (resource) ->
-      _.filter(game.hexes, (hex) -> hex.type is resource)
-    binned_hexes = _.object(RESOURCES, hexes_by_resource)
-    _.each binned_hexes, (v,k) ->
-      total_dots = _.reduce(v, (memo, hex) ->
-        memo + hex.dots; 
-      , 0)
-      row = $('<tr>')
-      resource_name = $('<td>').text(k).appendTo(row)
-      hex_count = $('<td>').text(v.length).appendTo(row)
-      dot_count = $('<td>').text(total_dots).appendTo(row)
-      row.appendTo($('#resource-yields tbody'))
-
 class Hex
   constructor: (dom_row, row, col)->
     @id = game.hexes.length
@@ -148,14 +119,14 @@ class Hex
     @col = col
     @type = @roll = @dots = null
 
-    @dom_hex = @build_hex(dom_row)
+    @dom_hex = @build(dom_row)
     @dom_prob = null
     @adj_hexes = new Array(6)
     @roads = new Array(6)
     @buildings = new Array(6)
     @robbed = false;
 
-  build_hex: (row)->
+  build: (row)->
     hex = $(HEX_NODE)
       .data('hex-id', @id)
       .appendTo(row)
@@ -201,10 +172,32 @@ class Hex
       if neighbor
         neighbor.roads[opp_pos(pos)] = new_road
     @
-  gain_building: (pos) ->
+
+  gain_new_building: (pos) ->
     unless @buildings[pos]
-      @buildings[pos] = new Building(@, pos)
+      triad = _.compact([@, @adj_hexes[pos], @adj_hexes[next_pos(pos)]])
+      #check if any of the bordering hexes are non-sea
+      triad_nonsea = _.map triad, (hex) ->
+        hex.type != 'sea'
+      #if any are, a building can be placed
+      if true in triad_types
+        new_building = new Building(@, pos)
+        @buildings[pos] = new_building
+        new_building.hexes[opp_pos(pos)] = @
+        neighbors = [@adj_hexes[pos], @adj_hexes[next_pos(pos)]]
+        for neighbor, i in neighbors
+          if neighbor
+            new_pos = offset_pos(pos, 2*(i+1))
+            neighbor.gain_existing_building(new_building, new_pos)
+        new_building.associate_roads()
     @
+
+  gain_existing_building: (building, pos) ->
+    unless @buildings[pos]
+      @buildings[pos] = building
+      building.hexes[opp_pos(pos)] = @
+    @
+
   associate_hexes: ->
     for position in HEX_POSITIONS
       [pos, rel_row, rel_col] = [position['pos'], position['rel_row'], position['rel_col']]
@@ -220,49 +213,45 @@ class Hex
           if (hex.type != 'sea') || (@type != 'sea')
             @gain_road(i)
   surround_with_buildings: ->
-    for hex, i in @adj_hexes
-      console.log(i)
+    for pos in [0..5]
+      unless @buildings[pos]
+        we_three_hexes = [@, @adj_hexes[pos], @adj_hexes[next_pos(pos)]]
 
 
-
-class Road
-  constructor: (hex, pos) ->
-    @id = game.roads.length
-    game.roads.push @
+class Ownable
+  constructor: (hex, pos, collection) ->
     @hex = hex
     @pos = pos
-    
     @player = null
+    @id = collection.length
+    collection.push @
+  owned_by: (player) ->
+    @player = player
+    @dom_representation.addClass("player-#{player.id}-bg owned")
+  disown: ->
+    @dom_representation.removeClass("player-#{@player.id}-bg owned")
+    @player = null
+
+class Road extends Ownable
+  constructor: (hex, pos) ->
+    super(hex, pos, game.roads)
     @buildings = new Array(6)
-
     @hexes = [hex, hex.adj_hexes[pos]]
+    @dom_representation = @build()
 
-    @dom_road = @build_road()
-
-  build_road: ->
+  build: ->
     new_road = $('<div>')
       .addClass("road pos-#{@pos}")
       .appendTo(@hex.dom_hex)
-  end_with_buildings: ->
-    @hex.gain_building(@pos)
-    @hex.gain_building((@pos+5)%6)
 
-
-class Building
+class Building extends Ownable
   constructor: (hex, pos) ->
-    @id = game.buildings.length
-    game.buildings.push @
-    @hex = hex
-    @pos = pos
+    super(hex, pos, game.buildings)
     @hexes = new Array(6)
     @roads = new Array(2)
-    @associate_hexes()
-    @associate_roads()
-    @dom_building = @build_building()
-  associate_hexes: ->
-    @hexes[opp_pos(@pos)] = @hex
-    @hexes[prev_pos(@pos)] = @hex.adj_hexes[@pos]
-    @hexes[next_pos(@pos)] = @hex.adj_hexes[next_pos(@pos)]
+    # @associate_hexes()
+    
+    @dom_representation = @build()
   associate_roads: ->
     for hex, i in @hexes
       if hex
@@ -272,26 +261,7 @@ class Building
             @roads[next_pos(i)].buildings[opp_pos(next_pos(i))] = @
   existing_hexes: ->
     _.compact(@hexes)
-  build_building: ->
+  build: ->
     new_building = $('<div>')
       .addClass("building circle pos-#{@pos}")
       .appendTo(@hex.dom_hex)
-
-$(document).ready ->
-  # begin with two players
-  game.add_player() for player in [1..STARTING_PLAYERS]
-  game.add_row(row) for row in HEX_ROWS
-  game.populate_hexes()
-  game.populate_roads() #REMOVE
-  game.populate_buildings() #REMOVE
-
-  $('#players').on 'click', '.player', ->
-    $('.active').removeClass('active')
-    $(this).addClass('active')
-    id = $(this).data('player-id')
-    game.active_player = game.find_player(id)
-
-  $('input').on 'change', (e) ->
-    value = $(this).val()
-    $('#board-pane').css('transform', "rotate(#{value}deg)")
-    $('.probability').css('transform', "rotate(#{-value}deg)")

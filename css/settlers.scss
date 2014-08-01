@@ -184,6 +184,7 @@ $r3-6-vert: -$r1-4-vert;
   height: $road-h;
   background: whitesmoke;
   border: 1px solid #ccc;
+  z-index: 2;
 
   &.pos-0 {
     transform: rotate($r1-4-rot);
@@ -226,7 +227,7 @@ $b3-6-vert: 43.5%;
   width: $road-h*1.5;
   height: $road-h*1.5;
   position: absolute;
-  z-index: 2;
+  z-index: 3;
 
   &.pos-0 {
     left: $b1-2-4-5-hor;

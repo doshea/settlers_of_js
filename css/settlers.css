@@ -126,7 +126,8 @@ header {
   width: 4.15625em;
   height: 0.55417em;
   background: whitesmoke;
-  border: 1px solid #ccc; }
+  border: 1px solid #ccc;
+  z-index: 2; }
   .road.pos-0 {
     transform: rotate(-60deg);
     left: -18%;
@@ -156,7 +157,7 @@ header {
   width: 0.83125em;
   height: 0.83125em;
   position: absolute;
-  z-index: 2; }
+  z-index: 3; }
   .building.pos-0 {
     left: 15.9%;
     top: -11.5%; }
