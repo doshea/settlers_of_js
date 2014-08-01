@@ -99,11 +99,13 @@
       return _results;
     },
     populate_buildings: function() {
-      var hex, i, _i, _len, _ref, _results;
-      _ref = game.hexes;
+      var hex, i, non_sea_hexes, _i, _len, _results;
+      non_sea_hexes = _.filter(game.hexes, function(hex) {
+        return hex.type !== 'sea';
+      });
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        hex = _ref[_i];
+      for (_i = 0, _len = non_sea_hexes.length; _i < _len; _i++) {
+        hex = non_sea_hexes[_i];
         _results.push((function() {
           var _j, _results1;
           _results1 = [];
@@ -274,7 +276,7 @@
         triad_nonsea = _.map(triad, function(hex) {
           return hex.type !== 'sea';
         });
-        if (__indexOf.call(triad_types, true) >= 0) {
+        if (__indexOf.call(triad_nonsea, true) >= 0) {
           new_building = new Building(this, pos);
           this.buildings[pos] = new_building;
           new_building.hexes[opp_pos(pos)] = this;

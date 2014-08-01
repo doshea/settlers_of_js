@@ -57,7 +57,9 @@ window.game =
     for hex in game.hexes
       hex.surround_with_roads()
   populate_buildings: ->
-    for hex in game.hexes
+    non_sea_hexes = _.filter game.hexes, (hex) ->
+      hex.type != 'sea'
+    for hex in non_sea_hexes
       for i in [0..5]
         hex.gain_new_building(i)
   roll_dice: ->
@@ -180,7 +182,7 @@ class Hex
       triad_nonsea = _.map triad, (hex) ->
         hex.type != 'sea'
       #if any are, a building can be placed
-      if true in triad_types
+      if true in triad_nonsea
         new_building = new Building(@, pos)
         @buildings[pos] = new_building
         new_building.hexes[opp_pos(pos)] = @
