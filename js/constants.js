@@ -68,7 +68,19 @@ var RESOURCE_MAX = 19;
 var MAX_HAND_SIZE = 7;
 
 var HEX_NODE = "<div class='hex'></div>";
-var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>"
+var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>";
 
 var SHEETS = document.styleSheets
 var DYNAMIC_STYLESHEET = SHEETS[SHEETS.length-1]
+
+var stages = ['setting up', 'planting', 'playing', 'winning']
+var phases = ['rolling', 'robbing', 'building']
+
+var PLAYER_COLORS = [
+                    [255, 0 ,0], //red
+                    [0, 0, 255], //blue
+                    [255, 255, 0], //yellow
+                    [0, 255, 0], //green
+                    [0,0,0], //black
+                    [255,0,255] //purple
+                    ]

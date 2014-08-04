@@ -19,11 +19,21 @@
       id = $(this).data('player-id');
       return game.active_player = game.find_player(id);
     });
-    return $('input').on('change', function(e) {
+    $('input').on('change', function(e) {
       var value;
       value = $(this).val();
       $('#board-pane').css('transform', "rotate(" + value + "deg)");
       return $('.probability').css('transform', "rotate(" + (-value) + "deg)");
+    });
+    return $('#board-pane').on('click', '.building, .road', function() {
+      var associated_object, id;
+      id = $(this).data('id');
+      if ($(this).hasClass('road')) {
+        associated_object = game.find_road(id);
+      } else {
+        associated_object = game.find_building(id);
+      }
+      return associated_object.owned_by(game.active_player);
     });
   });
 

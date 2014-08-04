@@ -6,6 +6,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   window.game = {
+    phase: 'setting up',
     players: [],
     dev_cards: [],
     hexes: [],
@@ -50,7 +51,7 @@
     find_road: function(id) {
       return this.roads[parseInt(id)];
     },
-    find_buildings: function(id) {
+    find_building: function(id) {
       return this.buildings[parseInt(id)];
     },
     find_hex_rc: function(row, col) {
@@ -59,6 +60,12 @@
         return (hex.row === row) && (hex.col === col);
       });
       return matching[0];
+    },
+    non_sea_hexes: function() {
+      var non_sea_hexes;
+      return non_sea_hexes = _.filter(game.hexes, function(hex) {
+        return hex.type !== 'sea';
+      });
     },
     populate_hexes: function() {
       var hex, shuffled_hexes, _i, _len, _ref;
@@ -99,13 +106,11 @@
       return _results;
     },
     populate_buildings: function() {
-      var hex, i, non_sea_hexes, _i, _len, _results;
-      non_sea_hexes = _.filter(game.hexes, function(hex) {
-        return hex.type !== 'sea';
-      });
+      var hex, i, _i, _len, _ref, _results;
+      _ref = game.non_sea_hexes();
       _results = [];
-      for (_i = 0, _len = non_sea_hexes.length; _i < _len; _i++) {
-        hex = non_sea_hexes[_i];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        hex = _ref[_i];
         _results.push((function() {
           var _j, _results1;
           _results1 = [];
@@ -133,22 +138,23 @@
   };
 
   Player = (function() {
-    function Player() {
-      this.id = game.players.length;
-      game.players.push(this);
-      this.name = "Player " + (this.id + 1);
-      this.red = this.random_color();
-      this.green = this.random_color();
-      this.blue = this.random_color();
-      this.make_css_rules();
-      this.dom_box = this.build();
-      this.victory_points = 0;
-      log.msg("" + (this.name_span()) + " has joined the game.");
-    }
+    Player.MAX_PLAYERS = 6;
 
-    Player.prototype.random_color = function() {
-      return Math.floor(Math.random() * 256);
-    };
+    function Player() {
+      var _ref;
+      if (!(game.players.length >= this.constructor.MAX_PLAYERS)) {
+        this.id = game.players.length;
+        game.players.push(this);
+        this.name = "Player " + (this.id + 1);
+        _ref = PLAYER_COLORS[this.id], this.red = _ref[0], this.green = _ref[1], this.blue = _ref[2];
+        this.make_css_rules();
+        this.dom_box = this.build();
+        this.victory_points = 0;
+        log.msg("" + (this.name_span()) + " has joined the game.");
+      } else {
+        alert('Max Players reached');
+      }
+    }
 
     Player.prototype.rgb = function() {
       return "rgb(" + this.red + "," + this.green + "," + this.blue + ")";
@@ -185,6 +191,34 @@
   })();
 
   Hex = (function() {
+    Hex.POSITIONS = [
+      {
+        'pos': 0,
+        'rel_row': -1,
+        'rel_col': -1
+      }, {
+        'pos': 1,
+        'rel_row': -2,
+        'rel_col': 0
+      }, {
+        'pos': 2,
+        'rel_row': -1,
+        'rel_col': +1
+      }, {
+        'pos': 3,
+        'rel_row': 1,
+        'rel_col': +1
+      }, {
+        'pos': 4,
+        'rel_row': 2,
+        'rel_col': 0
+      }, {
+        'pos': 5,
+        'rel_row': 1,
+        'rel_col': -1
+      }
+    ];
+
     function Hex(dom_row, row, col) {
       this.id = game.hexes.length;
       game.hexes.push(this);
@@ -372,13 +406,10 @@
     }
 
     Ownable.prototype.owned_by = function(player) {
-      this.player = player;
-      return this.dom_representation.addClass("player-" + player.id + "-bg owned");
-    };
-
-    Ownable.prototype.disown = function() {
-      this.dom_representation.removeClass("player-" + this.player.id + "-bg owned");
-      return this.player = null;
+      if (!this.player) {
+        this.player = player;
+        return this.dom_rep.addClass("player-" + player.id + "-bg player-" + player.id + "-color owned").removeClass('unowned');
+      }
     };
 
     return Ownable;
@@ -392,12 +423,12 @@
       Road.__super__.constructor.call(this, hex, pos, game.roads);
       this.buildings = new Array(6);
       this.hexes = [hex, hex.adj_hexes[pos]];
-      this.dom_representation = this.build();
+      this.dom_rep = this.build();
     }
 
     Road.prototype.build = function() {
       var new_road;
-      return new_road = $('<div>').addClass("road pos-" + this.pos).appendTo(this.hex.dom_hex);
+      return new_road = $('<div>').addClass("road pos-" + this.pos + " unowned").appendTo(this.hex.dom_hex).data('id', this.id);
     };
 
     return Road;
@@ -411,7 +442,7 @@
       Building.__super__.constructor.call(this, hex, pos, game.buildings);
       this.hexes = new Array(6);
       this.roads = new Array(2);
-      this.dom_representation = this.build();
+      this.dom_rep = this.build();
     }
 
     Building.prototype.associate_roads = function() {
@@ -444,7 +475,13 @@
 
     Building.prototype.build = function() {
       var new_building;
-      return new_building = $('<div>').addClass("building circle pos-" + this.pos).appendTo(this.hex.dom_hex);
+      return new_building = $('<div>').addClass("building circle pos-" + this.pos + " unowned").appendTo(this.hex.dom_hex).data('id', this.id);
+    };
+
+    Building.prototype.owned_by = function(player) {
+      var new_span;
+      new_span = $('<span>').addClass('city');
+      return Building.__super__.owned_by.call(this, player).append(new_span);
     };
 
     return Building;

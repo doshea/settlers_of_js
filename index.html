@@ -36,6 +36,19 @@
         <tbody>
         </tbody>
       </table>
+      <table id='player-stats'>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Hexes</th>
+            <th></th>
+            <th>Cards</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </header>
 
     <!-- The lovely hex images were designed by Ryan Schenk (http://ryanschenk.com/2010/11/settlers-of-catan-tiles/) -->
@@ -48,21 +61,27 @@
 
       </div>
     </div>
-    <div id='log'>
-      <ul id='log-msgs'>
-        <li class='log-msg'><b>Welcome to Settlers of JS</b></span>
-        <hr>
-      </ul>
-    </div>
+    <div id='sidebar'>
+      <div id='controls'>
+        <section class='subcontrol inactive'>
+        </section>
+        <section class='subcontrol' id='dice'>
+          <div class='die'>
+            <span>&#x2680;</span>
+          </div>
+          <div class='die'>
+            <span>&#x2685;</span>
+          </div>
+          <button onclick='game.roll_dice()'>Roll Dice</button>
+        </section>
+      </div>
 
-    <div id='dice'>
-      <div class='die'>
-        <span>&#x2680;</span>
+      <div id='log'>
+        <ul id='log-msgs'>
+          <li class='log-msg'><b>Welcome to Settlers of JS</b></li>
+          <hr>
+        </ul>
       </div>
-      <div class='die'>
-        <span>&#x2685;</span>
-      </div>
-      <button onclick='game.roll_dice()'>Roll Dice</button>
     </div>
 
     <input type="range" name="points" min="-180" max="180">

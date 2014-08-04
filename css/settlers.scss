@@ -1,3 +1,11 @@
+// SVGs made using http://svg-edit.googlecode.com/svn/branches/stable/editor/svg-editor.html
+// Font made using https://icomoon.io/app/
+
+@font-face {
+  font-family: 'buildings';
+  src: url('../fonts/buildings.ttf') format('truetype');
+}
+
 $font-size: 16px;
 $font-conversion: 1em/$font-size;
 
@@ -38,7 +46,7 @@ $col-offset: $offset-multiplier * $nhwo;
 /* BOARD */
 #board-pane {
   text-align: center;
-  padding: 1em 0;
+  padding: 1em 0 0 0;
 }
 #board {
   position: relative;
@@ -47,27 +55,7 @@ $col-offset: $offset-multiplier * $nhwo;
   padding-bottom: 4em*$hscale;
 }
 
-/* LOG */
-#log {
-  background: whitesmoke;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  border-top: 2px solid black;
-  border-left: 2px solid black;
-  width: 14em;
-  max-height: 20em;
-  padding: 0 0.5em;
-}
-#log-msgs {
-  list-style-type: none;
-  font-size: smaller;
-  overflow: auto;
-  max-height: 19em;
-  width: inherit;
-  margin: 0.5em 0;
-  padding: 0; 
-}
+
 
 .circle {
   border-radius: 50%;
@@ -214,6 +202,9 @@ $r3-6-vert: -$r1-4-vert;
     left: $r1-4-hor;
     bottom: $r1-4-vert;
   }
+  &.owned {
+    border-color: black;
+  }
 }
 
 $b1-2-4-5-hor: $r2-5-left - 8.4%;
@@ -222,6 +213,7 @@ $b3-6-hor: -11.5%;
 $b3-6-vert: 43.5%;
 
 .building {
+
   background: whitesmoke;
   border: 1px solid #ccc;
   width: $road-h*1.5;
@@ -254,20 +246,86 @@ $b3-6-vert: 43.5%;
     top: $b3-6-vert;
   }
 }
+.settlement, .city {
+  position: absolute;
+  top: -120%;
+  left: -80%;
+  font-family: 'buildings';
+  font-size: 2em;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  -moz-box-shadow: 0 3px 0 black;
+  -ms-box-shadow: 0 3px 0 black;
+  -webkit-box-shadow: 0 3px 0 black;
+  box-shadow: 0 3px 0 black;
+}
+
+.settlement::after {
+    content: 's';
+  }
+.city::after {
+  content: 'c';
+}
 
 .road, .building {
-  &:hover {
+  opacity: 0.5;
+  
+  &.unowned:hover {
     background: #333;
+  }
+}
+
+.owned {
+  opacity: 1;
+}
+
+#sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 14em;
+  border-left: 2px solid black;
+
+  #controls {
+    position: relative;
+    height: 70%;
+  }
+
+  .subcontrol {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0.5em;
+    height: 100%;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+
+    &.stack-1 {
+      z-index: 1;
+    }
+    &.stack-2 {
+      z-index: 1;
+    }
+    &.stack-3 {
+      z-index: 1;
+    }
+    &.stack-4 {
+      z-index: 1;
+    }
+  }
+  .inactive {
+    left: 140%;
   }
 }
 
 
 #dice {
-  position: fixed;
-  top: 0;
-  right: 0;
   button {
-    width: 50%;
+    width: 80%;
     font-weight: bold;
     font-size: 1em;
   }
@@ -275,7 +333,24 @@ $b3-6-vert: 43.5%;
 .die {
   display: inline-block;
   span {
-    font-size: 15em;
+    font-size: 10em;
     line-height: 1em;
   }
+}
+
+/* LOG */
+#log {
+  background: whitesmoke;
+  border-top: 2px solid black;
+  padding: 0 0.5em;
+  height: 30%;
+}
+#log-msgs {
+  list-style-type: none;
+  font-size: smaller;
+  overflow: auto;
+  max-height: 19em;
+  width: inherit;
+  margin: 0.5em 0;
+  padding: 0; 
 }

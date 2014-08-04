@@ -1,4 +1,5 @@
 window.game =
+  phase: 'setting up'
   players: []
   dev_cards: []  
   hexes: []
@@ -31,12 +32,15 @@ window.game =
     @hexes[parseInt(id)]
   find_road: (id) ->
     @roads[parseInt(id)]
-  find_buildings: (id) ->
+  find_building: (id) ->
     @buildings[parseInt(id)]
   find_hex_rc: (row, col) ->
     matching = _.filter @hexes, (hex) ->
       (hex.row == row) and (hex.col == col)
     matching[0]
+  non_sea_hexes: ->
+    non_sea_hexes = _.filter game.hexes, (hex) ->
+      hex.type != 'sea'
   populate_hexes: ->
     shuffled_hexes = _.shuffle(HEX_DECK)
     for hex in game.hexes
@@ -57,9 +61,7 @@ window.game =
     for hex in game.hexes
       hex.surround_with_roads()
   populate_buildings: ->
-    non_sea_hexes = _.filter game.hexes, (hex) ->
-      hex.type != 'sea'
-    for hex in non_sea_hexes
+    for hex in game.non_sea_hexes()
       for i in [0..5]
         hex.gain_new_building(i)
   roll_dice: ->
@@ -72,23 +74,22 @@ window.game =
     log.msg("#{roller.name_span()} rolled <b>#{@die_roll}</b>.")
 
 class Player
+  @MAX_PLAYERS = 6
   constructor: ->
-    @id = game.players.length
-    game.players.push @
-    
-    @name = "Player #{@id+1}"
+    unless game.players.length >= @constructor.MAX_PLAYERS
+      @id = game.players.length
+      game.players.push @
+      
+      @name = "Player #{@id+1}"
 
-    @red = @random_color()
-    @green = @random_color()
-    @blue = @random_color()
-    @make_css_rules()
+      [@red, @green, @blue] = PLAYER_COLORS[@id]
+      @make_css_rules()
 
-    @dom_box = @build()
-    @victory_points = 0
-    log.msg("#{@name_span()} has joined the game.")
-
-  random_color: ->
-    Math.floor(Math.random()*256)
+      @dom_box = @build()
+      @victory_points = 0
+      log.msg("#{@name_span()} has joined the game.")
+    else
+      alert 'Max Players reached'
   rgb: ->
     "rgb(#{@red},#{@green},#{@blue})"
   anti_rgb: ->
@@ -113,6 +114,15 @@ class Player
     "<span class='player-#{@id}-color'>#{@name}</span>"
 
 class Hex
+  @POSITIONS = [
+    {'pos': 0, 'rel_row': -1, 'rel_col': -1},
+    {'pos': 1, 'rel_row': -2, 'rel_col': 0},
+    {'pos': 2, 'rel_row': -1, 'rel_col': +1},
+    {'pos': 3, 'rel_row': 1, 'rel_col': +1},
+    {'pos': 4, 'rel_row': 2, 'rel_col': 0},
+    {'pos': 5, 'rel_row': 1, 'rel_col': -1}
+  ]
+
   constructor: (dom_row, row, col)->
     @id = game.hexes.length
     game.hexes.push this
@@ -228,23 +238,24 @@ class Ownable
     @id = collection.length
     collection.push @
   owned_by: (player) ->
-    @player = player
-    @dom_representation.addClass("player-#{player.id}-bg owned")
-  disown: ->
-    @dom_representation.removeClass("player-#{@player.id}-bg owned")
-    @player = null
+    unless @player
+      @player = player
+      @dom_rep
+        .addClass("player-#{player.id}-bg player-#{player.id}-color owned")
+        .removeClass('unowned')
 
 class Road extends Ownable
   constructor: (hex, pos) ->
     super(hex, pos, game.roads)
     @buildings = new Array(6)
     @hexes = [hex, hex.adj_hexes[pos]]
-    @dom_representation = @build()
+    @dom_rep = @build()
 
   build: ->
     new_road = $('<div>')
-      .addClass("road pos-#{@pos}")
+      .addClass("road pos-#{@pos} unowned")
       .appendTo(@hex.dom_hex)
+      .data('id', @id)
 
 class Building extends Ownable
   constructor: (hex, pos) ->
@@ -253,7 +264,7 @@ class Building extends Ownable
     @roads = new Array(2)
     # @associate_hexes()
     
-    @dom_representation = @build()
+    @dom_rep = @build()
   associate_roads: ->
     for hex, i in @hexes
       if hex
@@ -265,5 +276,9 @@ class Building extends Ownable
     _.compact(@hexes)
   build: ->
     new_building = $('<div>')
-      .addClass("building circle pos-#{@pos}")
+      .addClass("building circle pos-#{@pos} unowned")
       .appendTo(@hex.dom_hex)
+      .data('id', @id)
+  owned_by: (player) ->
+    new_span = $('<span>').addClass('city')
+    super(player).append(new_span)

@@ -8,11 +8,19 @@ $(document).ready ->
 
   $('#players').on 'click', '.player', ->
     $('.active').removeClass('active')
-    $(this).addClass('active')
-    id = $(this).data('player-id')
+    $(@).addClass('active')
+    id = $(@).data('player-id')
     game.active_player = game.find_player(id)
 
   $('input').on 'change', (e) ->
-    value = $(this).val()
+    value = $(@).val()
     $('#board-pane').css('transform', "rotate(#{value}deg)")
     $('.probability').css('transform', "rotate(#{-value}deg)")
+
+  $('#board-pane').on 'click', '.building, .road', ->
+    id = $(@).data('id')
+    if $(@).hasClass('road')
+      associated_object = game.find_road(id)
+    else
+      associated_object = game.find_building(id)
+    associated_object.owned_by(game.active_player)
