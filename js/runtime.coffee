@@ -12,15 +12,14 @@ $(document).ready ->
     id = $(@).data('player-id')
     game.active_player = game.find_player(id)
 
-  $('input').on 'change', (e) ->
-    value = $(@).val()
-    $('#board-pane').css('transform', "rotate(#{value}deg)")
-    $('.probability').css('transform', "rotate(#{-value}deg)")
-
-  $('#board-pane').on 'click', '.building, .road', ->
+  $('#board-pane').on 'click', '.building.unowned.clickable, .road.unowned.clickable', ->
     id = $(@).data('id')
     if $(@).hasClass('road')
       associated_object = game.find_road(id)
     else
       associated_object = game.find_building(id)
-    associated_object.owned_by(game.active_player)
+    associated_object.owned_by game.active_player
+    
+  $('#board-pane').on 'click', '.building.owned.clickable', ->
+    id = $(@).data('id')
+    game.find_building(id).upgrade()

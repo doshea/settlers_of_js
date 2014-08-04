@@ -12,6 +12,11 @@ window.hex_type = (hex) ->
   else
     hex
 
+window.rotate_board = ->
+  value = $('#board-rotation').val()
+  $('#board').css('transform', "rotate(#{value}deg)")
+  $('.probability').css('transform', "rotate(#{-value}deg)")
+
 window.stats = 
   calculate_yields: ->
     $('#resource-yields tbody').empty()
@@ -35,9 +40,40 @@ window.bank =
   wood: RESOURCE_MAX
   ore: RESOURCE_MAX
 
+window.dice =
+  roll: null
+  FAKEOUT_FREQ: 100;
+  ROLL_TIME: 1000;
+  CODES: ['&#x2680;', '&#x2681;', '&#x2682', '&#x2683;', '&#x2684;', '&#x2685;']
+
+  start_roll: ->
+    unless @rolling
+      @rolling = true
+      fakeout_caller = window.setInterval ->
+        for die in $('.die span')
+          temp_roll = _.random(5)
+          $(die).html(dice.CODES[temp_roll])
+      , @FAKEOUT_FREQ
+      fakeout_stopper = window.setTimeout ->
+        window.clearInterval(fakeout_caller)
+        dice.end_roll()
+      , @ROLL_TIME
+
+  end_roll: ->
+      @roll = 0
+      for die in $('.die span')
+        temp_roll = _.random(5)
+        @roll += (temp_roll+1)
+        $(die).html(dice.CODES[temp_roll])
+      roller = game.active_player
+      log.msg("#{roller.name_span()} rolled <b>#{@roll}</b>.")
+      @rolling = false
+
+
 window.log = 
   msg: (content) ->
     new_msg = $('<li>')
       .addClass('log-msg')
       .html(content)
       .appendTo($('#log-msgs'))
+    $('#log-msgs').scrollTop($('#log-msgs').height())

@@ -6,21 +6,19 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   window.game = {
-    phase: 'setting up',
+    stage: STAGES[0],
+    phase: null,
     players: [],
     dev_cards: [],
     hexes: [],
     roads: [],
     buildings: [],
     rows: 0,
-    die_roll: null,
     active_player: null,
+    rolling: false,
     add_player: function() {
       var new_player;
-      new_player = new Player;
-      if (!this.active_player) {
-        return new_player.activate();
-      }
+      return new_player = new Player;
     },
     find_player: function(id) {
       return this.players[parseInt(id)];
@@ -122,18 +120,14 @@
       }
       return _results;
     },
-    roll_dice: function() {
-      var die, roll, roller, _i, _len, _ref;
-      this.die_roll = 0;
-      _ref = $('.die span');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        die = _ref[_i];
-        roll = Math.floor(Math.random() * 5);
-        this.die_roll += roll + 1;
-        $(die).html("&#x268" + roll + ";");
-      }
-      roller = game.active_player;
-      return log.msg("" + (roller.name_span()) + " rolled <b>" + this.die_roll + "</b>.");
+    finish_setup: function() {
+      this.stage = STAGES[1];
+      this.players[0].activate();
+      return $('#setup, #planting').toggleClass('inactive');
+    },
+    finish_planting: function() {
+      this.stage = STAGES[2];
+      return $('#planting, #dice').toggleClass('inactive');
     }
   };
 
@@ -146,6 +140,8 @@
         this.id = game.players.length;
         game.players.push(this);
         this.name = "Player " + (this.id + 1);
+        this.buildings = [];
+        this.roads = [];
         _ref = PLAYER_COLORS[this.id], this.red = _ref[0], this.green = _ref[1], this.blue = _ref[2];
         this.make_css_rules();
         this.dom_box = this.build();
@@ -431,6 +427,13 @@
       return new_road = $('<div>').addClass("road pos-" + this.pos + " unowned").appendTo(this.hex.dom_hex).data('id', this.id);
     };
 
+    Road.prototype.owned_by = function(player) {
+      if (!this.player) {
+        Road.__super__.owned_by.call(this, player);
+        return player.roads.push(this);
+      }
+    };
+
     return Road;
 
   })(Ownable);
@@ -442,6 +445,7 @@
       Building.__super__.constructor.call(this, hex, pos, game.buildings);
       this.hexes = new Array(6);
       this.roads = new Array(2);
+      this.upgrade_level = 0;
       this.dom_rep = this.build();
     }
 
@@ -480,8 +484,22 @@
 
     Building.prototype.owned_by = function(player) {
       var new_span;
-      new_span = $('<span>').addClass('city');
-      return Building.__super__.owned_by.call(this, player).append(new_span);
+      if (!this.player) {
+        new_span = $('<span>').addClass('city');
+        Building.__super__.owned_by.call(this, player).append(new_span);
+        return player.buildings.push(this);
+      }
+    };
+
+    Building.prototype.upgrade = function() {
+      switch (this.upgrade_level) {
+        case 0:
+          return log.msg(5);
+        case 1:
+          return log.msg(5);
+        case 2:
+          return log.msg(5);
+      }
     };
 
     return Building;

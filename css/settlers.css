@@ -19,6 +19,9 @@ header {
 .clickable {
   cursor: pointer; }
 
+.centered {
+  text-align: center; }
+
 /* BOARD */
 #board-pane {
   text-align: center;
@@ -182,7 +185,7 @@ header {
 
 .road, .building {
   opacity: 0.5; }
-  .road.unowned:hover, .building.unowned:hover {
+  .road.unowned.clickable:hover, .building.unowned.clickable:hover {
     background: #333; }
 
 .owned {
@@ -198,27 +201,32 @@ header {
   #sidebar #controls {
     position: relative;
     height: 70%; }
-  #sidebar .subcontrol {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    padding: 0.5em;
-    height: 100%;
-    -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s; }
-    #sidebar .subcontrol.stack-1 {
-      z-index: 1; }
-    #sidebar .subcontrol.stack-2 {
-      z-index: 1; }
-    #sidebar .subcontrol.stack-3 {
-      z-index: 1; }
-    #sidebar .subcontrol.stack-4 {
-      z-index: 1; }
-  #sidebar .inactive {
+
+.subcontrol {
+  border-left: 2px solid black;
+  margin-left: -2px;
+  background: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s; }
+  .subcontrol.stack-1 {
+    z-index: 1; }
+  .subcontrol.stack-2 {
+    z-index: 1; }
+  .subcontrol.stack-3 {
+    z-index: 1; }
+  .subcontrol.stack-4 {
+    z-index: 1; }
+  .subcontrol.inactive {
     left: 140%; }
+  .subcontrol h3 {
+    text-align: center; }
 
 #dice button {
   width: 80%;

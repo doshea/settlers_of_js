@@ -33,6 +33,9 @@ header {
 .clickable {
   cursor: pointer;
 }
+.centered {
+  text-align: center;
+}
 
 $hwo: 133px;
 $hho: 117px;
@@ -270,7 +273,7 @@ $b3-6-vert: 43.5%;
 .road, .building {
   opacity: 0.5;
   
-  &.unowned:hover {
+  &.unowned.clickable:hover {
     background: #333;
   }
 }
@@ -291,34 +294,39 @@ $b3-6-vert: 43.5%;
     position: relative;
     height: 70%;
   }
+}
 
-  .subcontrol {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    padding: 0.5em;
-    height: 100%;
-    -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s;
+.subcontrol {
+  border-left: 2px solid black;
+  margin-left: -2px;
+  background: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 
-    &.stack-1 {
-      z-index: 1;
-    }
-    &.stack-2 {
-      z-index: 1;
-    }
-    &.stack-3 {
-      z-index: 1;
-    }
-    &.stack-4 {
-      z-index: 1;
-    }
+  &.stack-1 {
+    z-index: 1;
   }
-  .inactive {
+  &.stack-2 {
+    z-index: 1;
+  }
+  &.stack-3 {
+    z-index: 1;
+  }
+  &.stack-4 {
+    z-index: 1;
+  }
+  &.inactive {
     left: 140%;
+  }
+  h3 {
+    text-align: center;
   }
 }
 

@@ -24,6 +24,13 @@
     }
   };
 
+  window.rotate_board = function() {
+    var value;
+    value = $('#board-rotation').val();
+    $('#board').css('transform', "rotate(" + value + "deg)");
+    return $('.probability').css('transform', "rotate(" + (-value) + "deg)");
+  };
+
   window.stats = {
     calculate_yields: function() {
       var binned_hexes, hexes_by_resource;
@@ -56,10 +63,53 @@
     ore: RESOURCE_MAX
   };
 
+  window.dice = {
+    roll: null,
+    FAKEOUT_FREQ: 100,
+    ROLL_TIME: 1000,
+    CODES: ['&#x2680;', '&#x2681;', '&#x2682', '&#x2683;', '&#x2684;', '&#x2685;'],
+    start_roll: function() {
+      var fakeout_caller, fakeout_stopper;
+      if (!this.rolling) {
+        this.rolling = true;
+        fakeout_caller = window.setInterval(function() {
+          var die, temp_roll, _i, _len, _ref, _results;
+          _ref = $('.die span');
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            die = _ref[_i];
+            temp_roll = _.random(5);
+            _results.push($(die).html(dice.CODES[temp_roll]));
+          }
+          return _results;
+        }, this.FAKEOUT_FREQ);
+        return fakeout_stopper = window.setTimeout(function() {
+          window.clearInterval(fakeout_caller);
+          return dice.end_roll();
+        }, this.ROLL_TIME);
+      }
+    },
+    end_roll: function() {
+      var die, roller, temp_roll, _i, _len, _ref;
+      this.roll = 0;
+      _ref = $('.die span');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        die = _ref[_i];
+        temp_roll = _.random(5);
+        this.roll += temp_roll + 1;
+        $(die).html(dice.CODES[temp_roll]);
+      }
+      roller = game.active_player;
+      log.msg("" + (roller.name_span()) + " rolled <b>" + this.roll + "</b>.");
+      return this.rolling = false;
+    }
+  };
+
   window.log = {
     msg: function(content) {
       var new_msg;
-      return new_msg = $('<li>').addClass('log-msg').html(content).appendTo($('#log-msgs'));
+      new_msg = $('<li>').addClass('log-msg').html(content).appendTo($('#log-msgs'));
+      return $('#log-msgs').scrollTop($('#log-msgs').height());
     }
   };
 

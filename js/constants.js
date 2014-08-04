@@ -73,8 +73,8 @@ var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div>
 var SHEETS = document.styleSheets
 var DYNAMIC_STYLESHEET = SHEETS[SHEETS.length-1]
 
-var stages = ['setting up', 'planting', 'playing', 'winning']
-var phases = ['rolling', 'robbing', 'building']
+var STAGES = ['setting up', 'planting', 'playing', 'winning']
+var PHASES = ['rolling', 'robbing', 'building']
 
 var PLAYER_COLORS = [
                     [255, 0 ,0], //red

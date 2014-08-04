@@ -19,13 +19,7 @@
       id = $(this).data('player-id');
       return game.active_player = game.find_player(id);
     });
-    $('input').on('change', function(e) {
-      var value;
-      value = $(this).val();
-      $('#board-pane').css('transform', "rotate(" + value + "deg)");
-      return $('.probability').css('transform', "rotate(" + (-value) + "deg)");
-    });
-    return $('#board-pane').on('click', '.building, .road', function() {
+    $('#board-pane').on('click', '.building.unowned.clickable, .road.unowned.clickable', function() {
       var associated_object, id;
       id = $(this).data('id');
       if ($(this).hasClass('road')) {
@@ -34,6 +28,11 @@
         associated_object = game.find_building(id);
       }
       return associated_object.owned_by(game.active_player);
+    });
+    return $('#board-pane').on('click', '.building.owned.clickable', function() {
+      var id;
+      id = $(this).data('id');
+      return game.find_building(id).upgrade();
     });
   });
 

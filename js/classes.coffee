@@ -1,19 +1,17 @@
 window.game =
-  phase: 'setting up'
+  stage: STAGES[0]
+  phase: null
   players: []
   dev_cards: []  
   hexes: []
   roads: []
   buildings: []
   rows: 0
-  die_roll: null
   active_player: null
+  rolling: false
 
   add_player: ->
     new_player = new Player
-    unless @active_player
-      new_player.activate()
-
   find_player: (id) ->
     @players[parseInt(id)]
 
@@ -64,14 +62,13 @@ window.game =
     for hex in game.non_sea_hexes()
       for i in [0..5]
         hex.gain_new_building(i)
-  roll_dice: ->
-    @die_roll = 0
-    for die in $('.die span')
-      roll = Math.floor(Math.random()*5)
-      @die_roll += (roll+1)
-      $(die).html("&#x268#{roll};")
-    roller = game.active_player
-    log.msg("#{roller.name_span()} rolled <b>#{@die_roll}</b>.")
+  finish_setup: ->
+    @stage = STAGES[1]
+    @players[0].activate()
+    $('#setup, #planting').toggleClass('inactive')
+  finish_planting: ->
+    @stage = STAGES[2]
+    $('#planting, #dice').toggleClass('inactive')
 
 class Player
   @MAX_PLAYERS = 6
@@ -81,6 +78,8 @@ class Player
       game.players.push @
       
       @name = "Player #{@id+1}"
+      @buildings = []
+      @roads = []
 
       [@red, @green, @blue] = PLAYER_COLORS[@id]
       @make_css_rules()
@@ -256,13 +255,17 @@ class Road extends Ownable
       .addClass("road pos-#{@pos} unowned")
       .appendTo(@hex.dom_hex)
       .data('id', @id)
+  owned_by: (player) ->
+    unless @player
+      super(player)
+      player.roads.push @
 
 class Building extends Ownable
   constructor: (hex, pos) ->
     super(hex, pos, game.buildings)
     @hexes = new Array(6)
     @roads = new Array(2)
-    # @associate_hexes()
+    @upgrade_level = 0
     
     @dom_rep = @build()
   associate_roads: ->
@@ -280,5 +283,13 @@ class Building extends Ownable
       .appendTo(@hex.dom_hex)
       .data('id', @id)
   owned_by: (player) ->
-    new_span = $('<span>').addClass('city')
-    super(player).append(new_span)
+    unless @player
+      new_span = $('<span>').addClass('city')
+      super(player).append(new_span)
+      player.buildings.push @
+
+  upgrade: ->
+    switch @upgrade_level
+      when 0 then log.msg(5)
+      when 1 then log.msg(5)
+      when 2 then log.msg(5)

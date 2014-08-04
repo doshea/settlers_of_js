@@ -41,9 +41,10 @@
           <tr>
             <th></th>
             <th>Name</th>
-            <th>Hexes</th>
-            <th></th>
-            <th>Cards</th>
+            <th>Resources</th>
+            <th>Dev Cards</th>
+            <th>Soldiers</th>
+            <th>VPs</th>
           </tr>
         </thead>
         <tbody>
@@ -63,16 +64,34 @@
     </div>
     <div id='sidebar'>
       <div id='controls'>
-        <section class='subcontrol inactive'>
+        <section class='subcontrol' id='setup'>
+          <h3>Setup Game</h3>
+          <ul>
+            <li>Add Players</li>
+            <li>Re-roll hexes</li>
+            <li>Re-roll probabilities</li>
+            ...until you're ready to
+          </ul>
+          <button id='finish-setup' onclick='game.finish_setup()'>Start the Game!</button>
         </section>
-        <section class='subcontrol' id='dice'>
+
+        <section class='subcontrol inactive' id='planting'>
+          <h3>Disembark</h3>
+          <p>You have arrived in the land of Catan and quickly setup settlements</p>
+          <button id='finish-setup' onclick='game.finish_planting()'>Start the Game!</button>
+        </section>
+
+        <section class='subcontrol inactive' id='dice'>
           <div class='die'>
             <span>&#x2680;</span>
           </div>
           <div class='die'>
             <span>&#x2685;</span>
           </div>
-          <button onclick='game.roll_dice()'>Roll Dice</button>
+          <button onclick='dice.start_roll()'>Roll Dice</button>
+        </section>
+        <section class='subcontrol inactive' id='building'>
+          <h3>Buying and Building</h3>
         </section>
       </div>
 
@@ -84,6 +103,6 @@
       </div>
     </div>
 
-    <input type="range" name="points" min="-180" max="180">
+    <input type="range" id="board-rotation" min="-180" max="180" oninput='rotate_board()'>
   </body>
 </html>
