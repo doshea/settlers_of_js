@@ -83,4 +83,5 @@ var PLAYER_COLORS = [
                     [0, 255, 0], //green
                     [0,0,0], //black
                     [255,0,255] //purple
-                    ]
+                    ];
+var STARTING_SETTLEMENTS = 2;

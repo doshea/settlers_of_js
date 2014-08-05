@@ -20,14 +20,34 @@
       return game.active_player = game.find_player(id);
     });
     $('#board-pane').on('click', '.building.unowned.clickable, .road.unowned.clickable', function() {
-      var associated_object, id;
+      var associated_object, id, is_road;
       id = $(this).data('id');
-      if ($(this).hasClass('road')) {
+      is_road = $(this).hasClass('road');
+      if (is_road) {
         associated_object = game.find_road(id);
       } else {
         associated_object = game.find_building(id);
       }
       return associated_object.owned_by(game.active_player);
+    });
+    $('#board-pane').on('click', '.plantable.road', function() {
+      var id, road;
+      id = $(this).data('id');
+      player = game.active_player;
+      road = game.find_road(id);
+      player.unplaced_roads -= 1;
+      road.owned_by(player);
+      return game.next_planter();
+    });
+    $('#board-pane').on('click', '.plantable.building', function() {
+      var building, id;
+      id = $(this).data('id');
+      building = game.find_building(id);
+      player = game.active_player;
+      player.unplaced_settlements -= 1;
+      building.owned_by(player);
+      $('.building').removeClass('plantable');
+      return $('.road.unowned').addClass('plantable');
     });
     return $('#board-pane').on('click', '.building.owned.clickable', function() {
       var id;

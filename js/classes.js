@@ -12,6 +12,8 @@
     dev_cards: [],
     hexes: [],
     roads: [],
+    planting_round: null,
+    planting_order: [],
     buildings: [],
     rows: 0,
     active_player: null,
@@ -121,13 +123,44 @@
       return _results;
     },
     finish_setup: function() {
+      var player_copy;
       this.stage = STAGES[1];
-      this.players[0].activate();
-      return $('#setup, #planting').toggleClass('inactive');
+      $('#setup, #planting').toggleClass('inactive');
+      $('.building').addClass('plantable');
+      player_copy = game.players.slice(0);
+      this.planting_order = game.players.concat(player_copy.reverse());
+      this.planting_round = 1;
+      return this.next_planter();
+    },
+    next_planter: function() {
+      var current, next;
+      if (this.planting_order.length === 0) {
+        return this.finish_planting();
+      } else {
+        current = this.active_player;
+        next = this.planting_order.shift();
+        if (current === next) {
+          this.planting_round += 1;
+        }
+        next.activate();
+        $('.road').removeClass('plantable');
+        return $('.building.unowned').addClass('plantable');
+      }
     },
     finish_planting: function() {
+      $('.plantable').removeClass('plantable');
+      this.planting_round = null;
       this.stage = STAGES[2];
+      this.phase = PHASES[0];
       return $('#planting, #dice').toggleClass('inactive');
+    },
+    finish_rolling: function() {
+      switch (dice.roll) {
+        case 7:
+          return this.phase = PHASES[1];
+        default:
+          return this.phase = PHASES[2];
+      }
     }
   };
 
@@ -142,6 +175,8 @@
         this.name = "Player " + (this.id + 1);
         this.buildings = [];
         this.roads = [];
+        this.unplaced_settlements = STARTING_SETTLEMENTS;
+        this.unplaced_roads = STARTING_SETTLEMENTS;
         _ref = PLAYER_COLORS[this.id], this.red = _ref[0], this.green = _ref[1], this.blue = _ref[2];
         this.make_css_rules();
         this.dom_box = this.build();

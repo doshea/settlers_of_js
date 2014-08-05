@@ -15,10 +15,6 @@ body {
   margin: 0;
 }
 
-header {
-  position: fixed;
-}
-
 .player {
   width: 1em;
   height: 1em;
@@ -30,7 +26,7 @@ header {
   }
 }
 
-.clickable {
+.clickable, .plantable {
   cursor: pointer;
 }
 .centered {
@@ -139,6 +135,7 @@ $col-offset: $offset-multiplier * $nhwo;
   height: 4em*$hscale;
   left: 25%;
   top: -15%;
+  z-index: 10002;
 
   img{
     height: 100%;
@@ -147,7 +144,7 @@ $col-offset: $offset-multiplier * $nhwo;
 }
 
 #robber {
-  z-index: 1;
+  z-index: 1001;
 }
 #robber-shadow {
   -webkit-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8,1.4);
@@ -273,26 +270,37 @@ $b3-6-vert: 43.5%;
 .road, .building {
   opacity: 0.5;
   
-  &.unowned.clickable:hover {
+  &.unowned.clickable:hover, &.plantable:hover {
     background: #333;
   }
+}
+.plantable {
+  z-index: 1000;
 }
 
 .owned {
   opacity: 1;
+  z-index: 1001;
 }
 
-#sidebar {
-  position: fixed;
-  right: 0;
+.sidebar {
+  position: fixed;  
   top: 0;
   height: 100%;
   width: 14em;
-  border-left: 2px solid black;
+  
 
   #controls {
     position: relative;
     height: 70%;
+  }
+  &.right {
+    right: 0;
+    border-left: 2px solid black;
+  }
+  &.left {
+    left: 0;
+    border-right: 2px solid black;
   }
 }
 

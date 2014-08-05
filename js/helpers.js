@@ -52,6 +52,21 @@
         dot_count = $('<td>').text(total_dots).appendTo(row);
         return row.appendTo($('#resource-yields tbody'));
       });
+    },
+    player_stats: function(player) {
+      var color, id, row, table;
+      id = player.id;
+      table = $('#player-stats');
+      row = table.find(".player-" + id);
+      if (row.length === 0) {
+        row = $('<td>').addClass("player-" + id);
+        if (id === 0) {
+          table.prepend(row);
+        } else {
+          table.find(".player-" + (id - 1)).after(row);
+        }
+      }
+      return color = $('<td>').addClass("player-" + id + "-bg").appendTo(row);
     }
   };
 

@@ -5,9 +5,6 @@ body {
   padding: 0;
   margin: 0; }
 
-header {
-  position: fixed; }
-
 .player {
   width: 1em;
   height: 1em;
@@ -16,7 +13,7 @@ header {
   .player:not(.active) {
     border-color: white !important; }
 
-.clickable {
+.clickable, .plantable {
   cursor: pointer; }
 
 .centered {
@@ -91,13 +88,14 @@ header {
   z-index: 10;
   height: 4em;
   left: 25%;
-  top: -15%; }
+  top: -15%;
+  z-index: 10002; }
   #robber-container img {
     height: 100%;
     position: absolute; }
 
 #robber {
-  z-index: 1; }
+  z-index: 1001; }
 
 #robber-shadow {
   -webkit-transform: translate(1.8em, 4.6em) rotate(150deg) scale(0.8, 1.4);
@@ -185,22 +183,30 @@ header {
 
 .road, .building {
   opacity: 0.5; }
-  .road.unowned.clickable:hover, .building.unowned.clickable:hover {
+  .road.unowned.clickable:hover, .road.plantable:hover, .building.unowned.clickable:hover, .building.plantable:hover {
     background: #333; }
 
-.owned {
-  opacity: 1; }
+.plantable {
+  z-index: 1000; }
 
-#sidebar {
+.owned {
+  opacity: 1;
+  z-index: 1001; }
+
+.sidebar {
   position: fixed;
-  right: 0;
   top: 0;
   height: 100%;
-  width: 14em;
-  border-left: 2px solid black; }
-  #sidebar #controls {
+  width: 14em; }
+  .sidebar #controls {
     position: relative;
     height: 70%; }
+  .sidebar.right {
+    right: 0;
+    border-left: 2px solid black; }
+  .sidebar.left {
+    left: 0;
+    border-right: 2px solid black; }
 
 .subcontrol {
   border-left: 2px solid black;

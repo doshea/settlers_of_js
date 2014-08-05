@@ -19,7 +19,7 @@
 
   </head>
   <body>
-    <header>
+    <div class='sidebar left'>
       <label>Players:</label>
       <div id='players'></div>
       <button onclick="game.add_player()">Add Player</button>
@@ -50,7 +50,7 @@
         <tbody>
         </tbody>
       </table>
-    </header>
+    </div>
 
     <!-- The lovely hex images were designed by Ryan Schenk (http://ryanschenk.com/2010/11/settlers-of-catan-tiles/) -->
     <div id='board-pane'>
@@ -62,33 +62,42 @@
 
       </div>
     </div>
-    <div id='sidebar'>
+    <div class='sidebar right'>
       <div id='controls'>
         <section class='subcontrol' id='setup'>
-          <h3>Setup Game</h3>
+          <h3>Setup</h3>
           <ul>
             <li>Add Players</li>
             <li>Re-roll hexes</li>
             <li>Re-roll probabilities</li>
-            ...until you're ready to
           </ul>
+          <p>Once you're ready to start, just click...</p>
           <button id='finish-setup' onclick='game.finish_setup()'>Start the Game!</button>
         </section>
 
         <section class='subcontrol inactive' id='planting'>
           <h3>Disembark</h3>
-          <p>You have arrived in the land of Catan and quickly setup settlements</p>
+          <p>You have arrived in the land of Catan and quickly construct preliminary settlements.</p>
+          <p>Each player may place a settlement and a road connected to their settlement, following turn order</p>
+          <p>Then, repeat the process in reverse turn order.</p>
+          
+          <p class='instructions'></p>
+
           <button id='finish-setup' onclick='game.finish_planting()'>Start the Game!</button>
         </section>
 
         <section class='subcontrol inactive' id='dice'>
-          <div class='die'>
+          <div class='die centered'>
             <span>&#x2680;</span>
           </div>
-          <div class='die'>
+          <div class='die centered'>
             <span>&#x2685;</span>
           </div>
-          <button onclick='dice.start_roll()'>Roll Dice</button>
+            <button onclick='dice.start_roll()'>Roll Dice</button>
+          <div id='roll-acceptance'>
+            <button onclick='game.finish_rolling()'>Sweet!</button>
+            <button onclick='game.finish_rolling()'>Awww...</button>
+          </div>
         </section>
         <section class='subcontrol inactive' id='building'>
           <h3>Buying and Building</h3>

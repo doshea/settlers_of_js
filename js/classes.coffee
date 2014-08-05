@@ -5,6 +5,8 @@ window.game =
   dev_cards: []  
   hexes: []
   roads: []
+  planting_round: null
+  planting_order: []
   buildings: []
   rows: 0
   active_player: null
@@ -64,11 +66,38 @@ window.game =
         hex.gain_new_building(i)
   finish_setup: ->
     @stage = STAGES[1]
-    @players[0].activate()
     $('#setup, #planting').toggleClass('inactive')
+    $('.building').addClass('plantable')
+    player_copy = game.players.slice(0)
+    @planting_order = game.players.concat(player_copy.reverse())
+    @planting_round = 1
+    @next_planter()
+  next_planter: ->
+    if @planting_order.length is 0
+      @finish_planting()
+    else
+      current = @active_player
+      next = @planting_order.shift()
+      if current is next
+        @planting_round += 1
+      next.activate()
+      $('.road').removeClass('plantable')
+      $('.building.unowned').addClass('plantable')
+
+
+
   finish_planting: ->
+    $('.plantable').removeClass('plantable')
+    @planting_round = null
     @stage = STAGES[2]
+    @phase = PHASES[0]
     $('#planting, #dice').toggleClass('inactive')
+  finish_rolling: ->
+    switch dice.roll
+      when 7 then @phase = PHASES[1]
+      else @phase = PHASES[2]
+  
+
 
 class Player
   @MAX_PLAYERS = 6
@@ -80,6 +109,8 @@ class Player
       @name = "Player #{@id+1}"
       @buildings = []
       @roads = []
+      @unplaced_settlements = STARTING_SETTLEMENTS;
+      @unplaced_roads = STARTING_SETTLEMENTS;
 
       [@red, @green, @blue] = PLAYER_COLORS[@id]
       @make_css_rules()

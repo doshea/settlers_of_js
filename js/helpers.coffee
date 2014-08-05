@@ -32,6 +32,20 @@ window.stats =
       hex_count = $('<td>').text(v.length).appendTo(row)
       dot_count = $('<td>').text(total_dots).appendTo(row)
       row.appendTo($('#resource-yields tbody'))
+  player_stats: (player) ->
+    id = player.id
+    table = $('#player-stats')
+    row = table.find(".player-#{id}")
+    if row.length is 0
+      row = $('<td>').addClass("player-#{id}")
+      if id is 0
+        table.prepend(row)
+      else
+        table.find(".player-#{id-1}").after(row)
+    color = $('<td>').addClass("player-#{id}-bg").appendTo(row)
+
+
+
 
 window.bank =
   sheep: RESOURCE_MAX
