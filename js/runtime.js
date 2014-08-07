@@ -12,13 +12,6 @@
     game.populate_hexes();
     game.populate_roads();
     game.populate_buildings();
-    $('#players').on('click', '.player', function() {
-      var id;
-      $('.active').removeClass('active');
-      $(this).addClass('active');
-      id = $(this).data('player-id');
-      return game.active_player = game.find_player(id);
-    });
     $('#board-pane').on('click', '.building.unowned.clickable, .road.unowned.clickable', function() {
       var associated_object, id, is_road;
       id = $(this).data('id');
@@ -48,6 +41,18 @@
       building.owned_by(player);
       $('.building').removeClass('plantable');
       return $('.road.unowned').addClass('plantable');
+    });
+    $('#log form').on('submit', function(e) {
+      var field, message;
+      e.preventDefault();
+      field = $('form input');
+      message = field.val();
+      if (message !== '') {
+        if (game.active_player) {
+          log.msg("" + (game.active_player.name_span()) + ": " + message);
+        }
+        return field.val('');
+      }
     });
     return $('#board-pane').on('click', '.building.owned.clickable', function() {
       var id;

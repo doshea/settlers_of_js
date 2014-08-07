@@ -17,9 +17,12 @@ window.rotate_board = ->
   $('#board').css('transform', "rotate(#{value}deg)")
   $('.probability').css('transform', "rotate(#{-value}deg)")
 
+window.all_dots = []
+
 window.stats = 
   calculate_yields: ->
     $('#resource-yields tbody').empty()
+    rows = []
     hexes_by_resource = _.map RESOURCES, (resource) ->
       _.filter(game.hexes, (hex) -> hex.type is resource)
     binned_hexes = _.object(RESOURCES, hexes_by_resource)
@@ -27,10 +30,20 @@ window.stats =
       total_dots = _.reduce(v, (memo, hex) ->
         memo + hex.dots; 
       , 0)
+      all_dots.push(total_dots)
       row = $('<tr>')
       resource_name = $('<td>').text(k).appendTo(row)
       hex_count = $('<td>').text(v.length).appendTo(row)
-      dot_count = $('<td>').text(total_dots).appendTo(row)
+      dot_count = $('<td>').addClass('dot-count').text(total_dots).appendTo(row)
+      if total_dots < 9
+        row.css('background', 'tomato')
+      if total_dots > 14
+        row.css('background', 'lightgreen')
+      rows.push(row)
+    #sort by descending probability
+    rows = _.sortBy rows, (row) ->
+      parseInt($(row).find('.dot-count').text()) * -1
+    for row in rows
       row.appendTo($('#resource-yields tbody'))
   player_stats: (player) ->
     id = player.id
@@ -43,8 +56,12 @@ window.stats =
       else
         table.find(".player-#{id-1}").after(row)
     color = $('<td>').addClass("player-#{id}-bg").appendTo(row)
-
-
+  calculate_richness: ->
+    resource_richness = 0
+    for b in game.buildings
+      for h in b.existing_hexes()
+        resource_richness += h.dots
+    resource_richness
 
 
 window.bank =
@@ -91,3 +108,5 @@ window.log =
       .html(content)
       .appendTo($('#log-msgs'))
     $('#log-msgs').scrollTop($('#log-msgs').height())
+
+window.richnesses = {}

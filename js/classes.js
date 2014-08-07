@@ -191,24 +191,23 @@
       return "rgb(" + this.red + "," + this.green + "," + this.blue + ")";
     };
 
-    Player.prototype.anti_rgb = function() {
-      return "rgb(" + (256 - this.red) + "," + (256 - this.green) + "," + (256 - this.blue) + ")";
-    };
-
     Player.prototype.make_css_rules = function() {
       DYNAMIC_STYLESHEET.insertRule(".player-" + this.id + "-bg { background: " + (this.rgb()) + " }", 0);
-      DYNAMIC_STYLESHEET.insertRule(".player-" + this.id + "-color { color: " + (this.rgb()) + " }", 0);
-      return DYNAMIC_STYLESHEET.insertRule(".player-" + this.id + "-anti-border { border: 2px solid " + (this.anti_rgb()) + " }", 0);
+      return DYNAMIC_STYLESHEET.insertRule(".player-" + this.id + "-color { color: " + (this.rgb()) + " }", 0);
     };
 
     Player.prototype.build = function() {
-      var box;
-      return box = $('<div>').addClass('player').data('player-id', this.id).addClass("player-" + this.id + "-bg player-" + this.id + "-anti-border").appendTo($('#players'));
+      var box, name, tab;
+      tab = $('<li>').addClass("player player-" + this.id);
+      box = $('<div>').addClass('flag').data('player-id', this.id).addClass("player-" + this.id + "-bg").appendTo(tab);
+      name = $('<span>').text(this.name).appendTo(tab);
+      tab.appendTo($('#players'));
+      return box;
     };
 
     Player.prototype.activate = function() {
       game.active_player = this;
-      $('.player').removeClass('active');
+      $('.flag').removeClass('active');
       this.dom_box.addClass('active');
       return this;
     };

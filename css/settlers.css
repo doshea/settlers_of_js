@@ -1,20 +1,39 @@
 @font-face {
   font-family: 'buildings';
   src: url("../fonts/buildings.ttf") format("truetype"); }
+* {
+  font-family: "Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
+  font-weight: 300; }
+
 body {
   padding: 0;
   margin: 0; }
 
+#players {
+  list-style-type: none;
+  padding: 0;
+  margin: 0; }
+
 .player {
-  width: 1em;
-  height: 1em;
-  border-style: solid;
-  display: inline-block; }
-  .player:not(.active) {
-    border-color: white !important; }
+  border-top: 1px dashed black; }
+  .player:last-child {
+    border-bottom: 1px dashed black; }
+  .player .flag {
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    border-style: solid;
+    display: inline-block; }
+    .player .flag:not(.active) {
+      border-color: white !important; }
 
 .clickable, .plantable {
   cursor: pointer; }
+  .clickable.building:hover, .plantable.building:hover {
+    -webkit-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    transform: scale(1.4); }
 
 .centered {
   text-align: center; }
@@ -22,7 +41,15 @@ body {
 /* BOARD */
 #board-pane {
   text-align: center;
-  padding: 1em 0 0 0; }
+  padding: 1em 0 0 0;
+  background: #ffffff;
+  background: -moz-radial-gradient(center, ellipse cover, white 0%, #6e9bcc 100%);
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, white), color-stop(100%, #6e9bcc));
+  background: -webkit-radial-gradient(center, ellipse cover, white 0%, #6e9bcc 100%);
+  background: -o-radial-gradient(center, ellipse cover, white 0%, #6e9bcc 100%);
+  background: -ms-radial-gradient(center, ellipse cover, white 0%, #6e9bcc 100%);
+  background: radial-gradient(ellipse at center, white 0%, #6e9bcc 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#6e9bcc',GradientType=1 ); }
 
 #board {
   position: relative;
@@ -69,7 +96,8 @@ body {
   display: inline-block;
   margin: 0 2.8178em; }
   .hex.sea {
-    background-image: url("../img/sea4.png"); }
+    background-image: url("../img/sea4.png");
+    visibility: hidden; }
   .hex.brick {
     background-image: url("../img/brick4.png"); }
   .hex.ore {
@@ -182,7 +210,11 @@ body {
   content: 'c'; }
 
 .road, .building {
-  opacity: 0.5; }
+  visibility: visible;
+  -webkit-transition: -webkit-transform 0.3s;
+  -moz-transition: -moz-transform 0.3s;
+  -o-transition: -o-transform 0.3s;
+  transition: transform 0.3s; }
   .road.unowned.clickable:hover, .road.plantable:hover, .building.unowned.clickable:hover, .building.plantable:hover {
     background: #333; }
 
@@ -194,13 +226,16 @@ body {
   z-index: 1001; }
 
 .sidebar {
+  background: white;
   position: fixed;
   top: 0;
   height: 100%;
   width: 14em; }
+  .sidebar h3 {
+    text-align: center; }
   .sidebar #controls {
     position: relative;
-    height: 70%; }
+    height: 60%; }
   .sidebar.right {
     right: 0;
     border-left: 2px solid black; }
@@ -211,7 +246,6 @@ body {
 .subcontrol {
   border-left: 2px solid black;
   margin-left: -2px;
-  background: white;
   position: absolute;
   left: 0;
   top: 0;
@@ -231,8 +265,6 @@ body {
     z-index: 1; }
   .subcontrol.inactive {
     left: 140%; }
-  .subcontrol h3 {
-    text-align: center; }
 
 #dice button {
   width: 80%;
@@ -250,7 +282,12 @@ body {
   background: whitesmoke;
   border-top: 2px solid black;
   padding: 0 0.5em;
-  height: 30%; }
+  height: 40%; }
+  #log input[type='text'] {
+    position: absolute;
+    bottom: 0.4em;
+    width: 96%;
+    left: 0.4em; }
 
 #log-msgs {
   list-style-type: none;

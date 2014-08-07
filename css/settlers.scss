@@ -9,25 +9,50 @@
 $font-size: 16px;
 $font-conversion: 1em/$font-size;
 
+* {
+  font-family: "Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
+  font-weight: 300;
+}
 
 body {
   padding: 0;
   margin: 0;
 }
 
-.player {
-  width: 1em;
-  height: 1em;
-  border-style: solid;
-  display: inline-block;
+#players {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
-  &:not(.active){
-    border-color: white !important;
+.player {
+  border-top: 1px dashed black;
+  &:last-child {
+    border-bottom: 1px dashed black;
+  }
+  .flag {
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    border-style: solid;
+    display: inline-block;
+
+    &:not(.active){
+      border-color: white !important;
+    }
   }
 }
 
 .clickable, .plantable {
   cursor: pointer;
+
+  &.building:hover {
+    -webkit-transform: scale(1.50);
+    -moz-transform: scale(1.50);
+    -o-transform: scale(1.50);
+    transform: scale(1.40);
+  }
+  
 }
 .centered {
   text-align: center;
@@ -42,10 +67,19 @@ $nhho: $hho * $hscale * $font-conversion;
 $offset-multiplier: 0.84;
 $col-offset: $offset-multiplier * $nhwo;
 
+$pane-color: #6e9bcc;
 /* BOARD */
 #board-pane {
   text-align: center;
   padding: 1em 0 0 0;
+  background: #ffffff;
+  background: -moz-radial-gradient(center, ellipse cover,  #ffffff 0%, $pane-color 100%);
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(100%,$pane-color));
+  background: -webkit-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  background: -o-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  background: -ms-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  background: radial-gradient(ellipse at center,  #ffffff 0%,$pane-color 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#6e9bcc',GradientType=1 );
 }
 #board {
   position: relative;
@@ -107,7 +141,7 @@ $col-offset: $offset-multiplier * $nhwo;
 
   &.sea {
     background-image: url('../img/sea4.png');
-
+    visibility: hidden;
   }
   &.brick {
     background-image: url('../img/brick4.png');
@@ -268,8 +302,14 @@ $b3-6-vert: 43.5%;
 }
 
 .road, .building {
-  opacity: 0.5;
-  
+  visibility: visible;
+
+  -webkit-transition: -webkit-transform 0.3s;
+  -moz-transition: -moz-transform 0.3s;
+  -o-transition: -o-transform 0.3s;
+  transition: transform 0.3s;
+
+
   &.unowned.clickable:hover, &.plantable:hover {
     background: #333;
   }
@@ -283,16 +323,21 @@ $b3-6-vert: 43.5%;
   z-index: 1001;
 }
 
+$controls-h: 60%;
+
 .sidebar {
+  background: white;
   position: fixed;  
   top: 0;
   height: 100%;
   width: 14em;
-  
+  h3 {
+    text-align: center;
+  }
 
   #controls {
     position: relative;
-    height: 70%;
+    height: $controls-h;
   }
   &.right {
     right: 0;
@@ -307,7 +352,6 @@ $b3-6-vert: 43.5%;
 .subcontrol {
   border-left: 2px solid black;
   margin-left: -2px;
-  background: white;
   position: absolute;
   left: 0;
   top: 0;
@@ -333,9 +377,6 @@ $b3-6-vert: 43.5%;
   &.inactive {
     left: 140%;
   }
-  h3 {
-    text-align: center;
-  }
 }
 
 
@@ -359,7 +400,14 @@ $b3-6-vert: 43.5%;
   background: whitesmoke;
   border-top: 2px solid black;
   padding: 0 0.5em;
-  height: 30%;
+  height: 100% - $controls-h;
+
+  input[type='text'] {
+    position: absolute;
+    bottom: 0.4em;
+    width: 96%;
+    left: 0.4em;
+  }
 }
 #log-msgs {
   list-style-type: none;

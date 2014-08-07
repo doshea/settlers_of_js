@@ -6,12 +6,6 @@ $(document).ready ->
   game.populate_roads() #REMOVE
   game.populate_buildings() #REMOVE
 
-  $('#players').on 'click', '.player', ->
-    $('.active').removeClass('active')
-    $(@).addClass('active')
-    id = $(@).data('player-id')
-    game.active_player = game.find_player(id)
-
   $('#board-pane').on 'click', '.building.unowned.clickable, .road.unowned.clickable', ->
     id = $(@).data('id')
     is_road = $(@).hasClass('road')
@@ -38,7 +32,17 @@ $(document).ready ->
     building.owned_by(player)
     $('.building').removeClass('plantable')
     $('.road.unowned').addClass('plantable')
-    
+
+  $('#log form').on 'submit', (e) ->
+    e.preventDefault()
+    field = $('form input')
+    message = field.val()
+    if message != ''
+      if game.active_player
+        log.msg("#{game.active_player.name_span()}: #{message}")
+      field.val('')
+
+
 
 
   $('#board-pane').on 'click', '.building.owned.clickable', ->

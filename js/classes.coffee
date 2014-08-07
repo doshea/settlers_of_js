@@ -122,22 +122,27 @@ class Player
       alert 'Max Players reached'
   rgb: ->
     "rgb(#{@red},#{@green},#{@blue})"
-  anti_rgb: ->
-    "rgb(#{256-@red},#{256-@green},#{256-@blue})"
   make_css_rules: ->
     # Thanks to http://davidwalsh.name/add-rules-stylesheets
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-bg { background: #{@rgb()} }", 0)
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-color { color: #{@rgb()} }", 0)
-    DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-anti-border { border: 2px solid #{@anti_rgb()} }", 0)
   build: ->
+    tab = $('<li>')
+      .addClass("player player-#{@id}")
     box = $('<div>')
-      .addClass('player')
+      .addClass('flag')
       .data('player-id', @id)
-      .addClass("player-#{@id}-bg player-#{@id}-anti-border")
-      .appendTo($('#players'))
+      .addClass("player-#{@id}-bg")
+      .appendTo(tab)
+    name = $('<span>')
+      .text(@name)
+      .appendTo(tab)
+    tab.appendTo($('#players'))
+    box
+
   activate: ->
     game.active_player = @
-    $('.player').removeClass('active')
+    $('.flag').removeClass('active')
     @dom_box.addClass('active')
     @
   name_span: ->

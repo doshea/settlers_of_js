@@ -9,6 +9,7 @@
 
     <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="./js/underscore.min.js"></script>
+    <script type="text/javascript" src="./js/Chart.js"></script>
 
     <link href="./css/settlers.css" rel="stylesheet" type="text/css">
     <link href="./css/empty.css" rel="stylesheet" type="text/css">
@@ -20,22 +21,9 @@
   </head>
   <body>
     <div class='sidebar left'>
-      <label>Players:</label>
-      <div id='players'></div>
+      <h3>Players</h3>
+      <ul id='players'></ul>
       <button onclick="game.add_player()">Add Player</button>
-      <button onclick="game.populate_hexes()">Reset Hexes</button>
-      <button onclick="game.populate_probabilities()">Reset Probabilities</button>
-      <table id='resource-yields'>
-        <thead>
-          <tr>
-            <th>Resource</th>
-            <th>Hexes</th>
-            <th>Dots</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
       <table id='player-stats'>
         <thead>
           <tr>
@@ -50,10 +38,12 @@
         <tbody>
         </tbody>
       </table>
+      <canvas id="myChart" width="400" height="400"></canvas>
     </div>
 
     <!-- The lovely hex images were designed by Ryan Schenk (http://ryanschenk.com/2010/11/settlers-of-catan-tiles/) -->
     <div id='board-pane'>
+      <div id='test=hex'></div>
       <div id='board'>
         <div id='robber-container'>
           <img src='img/robber.png' id='robber'>
@@ -71,7 +61,20 @@
             <li>Re-roll hexes</li>
             <li>Re-roll probabilities</li>
           </ul>
-          <p>Once you're ready to start, just click...</p>
+          <table id='resource-yields'>
+            <thead>
+              <tr>
+                <th>Resource</th>
+                <th>Hexes</th>
+                <th>Dots</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <button onclick="game.populate_hexes()">Shuffle Hexes</button>
+          <button onclick="game.populate_probabilities()">Shuffle Probabilities</button>
+          <p>Once you're ready, just click...</p>
           <button id='finish-setup' onclick='game.finish_setup()'>Start the Game!</button>
         </section>
 
@@ -109,6 +112,9 @@
           <li class='log-msg'><b>Welcome to Settlers of JS</b></li>
           <hr>
         </ul>
+        <form>
+          <input type='text'></input>
+        </form>
       </div>
     </div>
 
