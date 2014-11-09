@@ -45,17 +45,6 @@ window.stats =
       parseInt($(row).find('.dot-count').text()) * -1
     for row in rows
       row.appendTo($('#resource-yields tbody'))
-  player_stats: (player) ->
-    id = player.id
-    table = $('#player-stats')
-    row = table.find(".player-#{id}")
-    if row.length is 0
-      row = $('<td>').addClass("player-#{id}")
-      if id is 0
-        table.prepend(row)
-      else
-        table.find(".player-#{id-1}").after(row)
-    color = $('<td>').addClass("player-#{id}-bg").appendTo(row)
   calculate_richness: ->
     resource_richness = 0
     for b in game.buildings

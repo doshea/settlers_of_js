@@ -66,6 +66,7 @@ window.game =
         hex.gain_new_building(i)
   finish_setup: ->
     @stage = STAGES[1]
+    $('.setup').remove()
     $('#setup, #planting').toggleClass('inactive')
     $('.building').addClass('plantable')
     player_copy = game.players.slice(0)
@@ -88,6 +89,7 @@ window.game =
 
   finish_planting: ->
     $('.plantable').removeClass('plantable')
+    $('.planting').remove()
     @planting_round = null
     @stage = STAGES[2]
     @phase = PHASES[0]
@@ -107,15 +109,22 @@ class Player
       game.players.push @
       
       @name = "Player #{@id+1}"
+      @resources =
+        brick: 0
+        ore: 0
+        wheat: 0
+        wood: 0
+        sheep: 0
       @buildings = []
       @roads = []
+      @army = 0
       @unplaced_settlements = STARTING_SETTLEMENTS;
       @unplaced_roads = STARTING_SETTLEMENTS;
 
       [@red, @green, @blue] = PLAYER_COLORS[@id]
       @make_css_rules()
 
-      @dom_box = @build()
+      @dom_rep = @build()
       @victory_points = 0
       log.msg("#{@name_span()} has joined the game.")
     else
@@ -127,26 +136,45 @@ class Player
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-bg { background: #{@rgb()} }", 0)
     DYNAMIC_STYLESHEET.insertRule(".player-#{@id}-color { color: #{@rgb()} }", 0)
   build: ->
-    tab = $('<li>')
-      .addClass("player player-#{@id}")
-    box = $('<div>')
-      .addClass('flag')
-      .data('player-id', @id)
-      .addClass("player-#{@id}-bg")
-      .appendTo(tab)
-    name = $('<span>')
-      .text(@name)
-      .appendTo(tab)
+    tab = $(PLAYER_NODE).addClass("player player-#{@id}")
+    tab.find('.flag').data('player-id', @id).addClass("player-#{@id}-bg")
+    tab.find('.name').text(@name)
     tab.appendTo($('#players'))
-    box
-
   activate: ->
+    if game.active_player
+      game.active_player.deactivate()
     game.active_player = @
-    $('.flag').removeClass('active')
-    @dom_box.addClass('active')
+    @dom_rep.addClass('active')
     @
+  deactivate: ->
+    @dom_rep.removeClass('active')
   name_span: ->
     "<span class='player-#{@id}-color'>#{@name}</span>"
+  gain_resource: (resource_str) ->
+    if @resources[resource_str] != undefined
+      @resources[resource_str] += 1
+      hand_size = 0
+      for key, value of @resources
+        hand_size += value
+      new_card = $('<div>').addClass('card')
+      resources = @dom_rep.find('.resources')
+      resources.append(new_card).find('.hand-no').text(hand_size)
+      if hand_size > 7
+        resources.addClass('over-max')
+      else
+        resources.removeClass('over-max')
+  move_robber: ->
+    console.log('does nothign yet')
+  play_knight: ->
+    @move_robber()
+    @army += 1
+    new_card = $('<div>').addClass('card')
+    army = @dom_rep.find('.army')
+    army.append(new_card).find('span').text(@army)
+  buy: ->
+
+
+
 
 class Hex
   @POSITIONS = [

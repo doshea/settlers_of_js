@@ -1,22 +1,21 @@
 // SVGs made using http://svg-edit.googlecode.com/svn/branches/stable/editor/svg-editor.html
 // Font made using https://icomoon.io/app/
 
+$font-size: 16px;
+$font-conversion: 1em/$font-size;
+
 @font-face {
   font-family: 'buildings';
   src: url('../fonts/buildings.ttf') format('truetype');
 }
 
-$font-size: 16px;
-$font-conversion: 1em/$font-size;
-
-* {
-  font-family: "Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
-  font-weight: 300;
+@-webkit-keyframes blinker {
+  0% { -webkit-filter: brightness(100%); }
+  50% { -webkit-filter: brightness(600%); }
+  100% { -webkit-filter: brightness(100%); }
 }
-
-body {
-  padding: 0;
-  margin: 0;
+.blinky {
+  -webkit-animation: blinker 4s infinite;
 }
 
 #players {
@@ -26,20 +25,78 @@ body {
 }
 
 .player {
-  border-top: 1px dashed black;
-  &:last-child {
-    border-bottom: 1px dashed black;
+  position: relative;
+  border-bottom: 1px dashed black;
+  padding-left: 0.5em;
+  .name {
+    margin-left: 0.5em; 
+    font-weight: 500;
   }
   .flag {
     vertical-align: middle;
     width: 1em;
     height: 1em;
-    border-style: solid;
     display: inline-block;
 
-    &:not(.active){
-      border-color: white !important;
-    }
+  }
+  &.active {
+    border-style: solid;
+    border: black;
+    background: blanchedalmond;
+  }
+}
+.vp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 0.25em 0.5em;
+  background: gold;
+}
+.resources {
+  width: 100%;
+
+  .card {
+    background: url('../img/profeasy/dev/card_back.png') no-repeat;
+  }
+}
+.card {
+  width: 2em;
+  height: 3em;
+  background-size: 100% !important;
+  display: inline-block;
+  margin-left: -1em;
+}
+.row {
+  font-size: small;
+  vertical-align: top;
+  height: 3.15em;
+  position: relative;
+  display: block;
+  overflow: hidden;
+
+  span {
+    font-size: inherit;
+    vertical-align: inherit;
+    margin-right: 1.25em;
+  }
+}
+.over-max {
+  span {
+    color: red;
+    font-weight: bold;
+    margin-right: 1.75em;
+  }
+  .card {
+    margin-left: -1.5em;
+  }
+}
+
+.army {
+  width: 100%;  
+  .card{
+    background: url('../img/profeasy/dev/knight.png') no-repeat;
   }
 }
 
@@ -72,14 +129,29 @@ $pane-color: #6e9bcc;
 #board-pane {
   text-align: center;
   padding: 1em 0 0 0;
-  background: #ffffff;
-  background: -moz-radial-gradient(center, ellipse cover,  #ffffff 0%, $pane-color 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(100%,$pane-color));
-  background: -webkit-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
-  background: -o-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
-  background: -ms-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
-  background: radial-gradient(ellipse at center,  #ffffff 0%,$pane-color 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#6e9bcc',GradientType=1 );
+  // background: #ffffff;
+  // background: -moz-radial-gradient(center, ellipse cover,  #ffffff 0%, $pane-color 100%);
+  // background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(100%,$pane-color));
+  // background: -webkit-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  // background: -o-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  // background: -ms-radial-gradient(center, ellipse cover,  #ffffff 0%,$pane-color 100%);
+  // background: radial-gradient(ellipse at center,  #ffffff 0%,$pane-color 100%);
+  // filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#6e9bcc',GradientType=1 );
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url('http://www.zingerbug.com/Backgrounds/background_images/light_blue_painted_textured_wall_tileable.jpg');
+    background-repeat: repeat;
+    -webkit-filter: blur(3px);
+    left: 0;
+    top: 0;
+    opacity: 0.7;
+  }
+
 }
 #board {
   position: relative;
@@ -338,6 +410,7 @@ $controls-h: 60%;
   #controls {
     position: relative;
     height: $controls-h;
+    min-height: 24em;
   }
   &.right {
     right: 0;
@@ -346,6 +419,12 @@ $controls-h: 60%;
   &.left {
     left: 0;
     border-right: 2px solid black;
+    h3 {
+      background: #ddd;
+      margin: 0;
+      padding: 1em 0;
+      border-bottom: 1px solid black;
+    }
   }
 }
 

@@ -125,6 +125,7 @@
     finish_setup: function() {
       var player_copy;
       this.stage = STAGES[1];
+      $('.setup').remove();
       $('#setup, #planting').toggleClass('inactive');
       $('.building').addClass('plantable');
       player_copy = game.players.slice(0);
@@ -149,6 +150,7 @@
     },
     finish_planting: function() {
       $('.plantable').removeClass('plantable');
+      $('.planting').remove();
       this.planting_round = null;
       this.stage = STAGES[2];
       this.phase = PHASES[0];
@@ -173,13 +175,21 @@
         this.id = game.players.length;
         game.players.push(this);
         this.name = "Player " + (this.id + 1);
+        this.resources = {
+          brick: 0,
+          ore: 0,
+          wheat: 0,
+          wood: 0,
+          sheep: 0
+        };
         this.buildings = [];
         this.roads = [];
+        this.army = 0;
         this.unplaced_settlements = STARTING_SETTLEMENTS;
         this.unplaced_roads = STARTING_SETTLEMENTS;
         _ref = PLAYER_COLORS[this.id], this.red = _ref[0], this.green = _ref[1], this.blue = _ref[2];
         this.make_css_rules();
-        this.dom_box = this.build();
+        this.dom_rep = this.build();
         this.victory_points = 0;
         log.msg("" + (this.name_span()) + " has joined the game.");
       } else {
@@ -197,24 +207,65 @@
     };
 
     Player.prototype.build = function() {
-      var box, name, tab;
-      tab = $('<li>').addClass("player player-" + this.id);
-      box = $('<div>').addClass('flag').data('player-id', this.id).addClass("player-" + this.id + "-bg").appendTo(tab);
-      name = $('<span>').text(this.name).appendTo(tab);
-      tab.appendTo($('#players'));
-      return box;
+      var tab;
+      tab = $(PLAYER_NODE).addClass("player player-" + this.id);
+      tab.find('.flag').data('player-id', this.id).addClass("player-" + this.id + "-bg");
+      tab.find('.name').text(this.name);
+      return tab.appendTo($('#players'));
     };
 
     Player.prototype.activate = function() {
+      if (game.active_player) {
+        game.active_player.deactivate();
+      }
       game.active_player = this;
-      $('.flag').removeClass('active');
-      this.dom_box.addClass('active');
+      this.dom_rep.addClass('active');
       return this;
+    };
+
+    Player.prototype.deactivate = function() {
+      return this.dom_rep.removeClass('active');
     };
 
     Player.prototype.name_span = function() {
       return "<span class='player-" + this.id + "-color'>" + this.name + "</span>";
     };
+
+    Player.prototype.gain_resource = function(resource_str) {
+      var hand_size, key, new_card, resources, value, _ref;
+      if (this.resources[resource_str] !== void 0) {
+        this.resources[resource_str] += 1;
+        hand_size = 0;
+        _ref = this.resources;
+        for (key in _ref) {
+          value = _ref[key];
+          hand_size += value;
+        }
+        new_card = $('<div>').addClass('card');
+        resources = this.dom_rep.find('.resources');
+        resources.append(new_card).find('.hand-no').text(hand_size);
+        if (hand_size > 7) {
+          return resources.addClass('over-max');
+        } else {
+          return resources.removeClass('over-max');
+        }
+      }
+    };
+
+    Player.prototype.move_robber = function() {
+      return console.log('does nothign yet');
+    };
+
+    Player.prototype.play_knight = function() {
+      var army, new_card;
+      this.move_robber();
+      this.army += 1;
+      new_card = $('<div>').addClass('card');
+      army = this.dom_rep.find('.army');
+      return army.append(new_card).find('span').text(this.army);
+    };
+
+    Player.prototype.buy = function() {};
 
     return Player;
 

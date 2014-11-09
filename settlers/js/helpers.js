@@ -72,21 +72,6 @@
       }
       return _results;
     },
-    player_stats: function(player) {
-      var color, id, row, table;
-      id = player.id;
-      table = $('#player-stats');
-      row = table.find(".player-" + id);
-      if (row.length === 0) {
-        row = $('<td>').addClass("player-" + id);
-        if (id === 0) {
-          table.prepend(row);
-        } else {
-          table.find(".player-" + (id - 1)).after(row);
-        }
-      }
-      return color = $('<td>').addClass("player-" + id + "-bg").appendTo(row);
-    },
     calculate_richness: function() {
       var b, h, resource_richness, _i, _j, _len, _len1, _ref, _ref1;
       resource_richness = 0;

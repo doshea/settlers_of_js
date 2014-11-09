@@ -69,6 +69,7 @@ var MAX_HAND_SIZE = 7;
 
 var HEX_NODE = "<div class='hex'></div>";
 var PROBABILITY_NODE = "<div class='probability circle'><div class='roll'></div><div class='dots'></div>";
+var PLAYER_NODE = "<li class='player'><div class='flag'></div><span class='name'></span><div class='resources row'>Hand: <span class='hand-no'>0</span><div class='card'></div></div><div class='dev row'>Dev Cards: <span class='dev-no'>0</span><div class='card'></div></div><div class='army row'>Army: <span class='army-no'>0</span><div class='card'></div></div><div class='vp'>0</div></li>";
 
 var SHEETS = document.styleSheets
 var DYNAMIC_STYLESHEET = SHEETS[SHEETS.length-1]
@@ -85,3 +86,14 @@ var PLAYER_COLORS = [
                     [255,0,255] //purple
                     ];
 var STARTING_SETTLEMENTS = 2;
+
+var COSTS = {
+  'road': {'brick': 1, 'wood': 1},
+  'settlement': {'brick': 1, 'wood': 1, 'wheat': 1, 'sheep': 1},
+  'city': {'wheat': 2, 'ore': 3},
+  'dev_card': {'wheat': 1, 'sheep': 1, 'ore': 1}
+};
+
+
+
+
